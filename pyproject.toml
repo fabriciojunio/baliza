@@ -1,0 +1,47 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "baliza"
+version = "1.0.0"
+description = "Ocupacao de vagas de estacionamento a partir de camera fixa"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+dependencies = [
+    "numpy>=1.26",
+    "opencv-python>=4.8,<5",
+    "ultralytics>=8.3",
+]
+
+[project.optional-dependencies]
+painel = ["streamlit>=1.35", "pandas>=2.0", "plotly>=5.20"]
+dev = ["pytest>=7.4", "pytest-cov>=4.1"]
+
+[project.scripts]
+baliza = "baliza.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = "-q"
+markers = ["lento: usa o modelo de verdade ou varre a base inteira"]
+
+[tool.coverage.run]
+source = ["src/baliza"]
+branch = true
+
+[tool.coverage.report]
+fail_under = 80
+show_missing = true
+exclude_lines = [
+    "pragma: sem cobertura",
+    "if __name__ == .__main__.:",
+    "raise NotImplementedError",
+    # A janela ao vivo depende de servidor grafico e de alguem apertando tecla.
+    "if mostrar:",
+]

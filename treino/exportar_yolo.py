@@ -45,7 +45,7 @@ def rotulo_de(anotacao: Path, largura: int, altura: int) -> list[str]:
     return linhas
 
 
-def exportar(raiz: str, saida: Path, por_dia: int) -> dict[str, int]:
+def exportar(raiz: str, saida: Path, por_dia: int, completo: bool = False) -> dict[str, int]:
     pastas = {"treino": "train", "validacao": "val", "teste": "test"}
     # A validação roda a cada época, então ela vai menor de propósito: o que
     # se quer dela é a curva, não a medição final, que sai no teste.
@@ -57,7 +57,8 @@ def exportar(raiz: str, saida: Path, por_dia: int) -> dict[str, int]:
         destino_img.mkdir(parents=True, exist_ok=True)
         destino_rot.mkdir(parents=True, exist_ok=True)
 
-        fotos = divisao.conjunto(raiz, nome, limite_por_dia=limites[nome])
+        escolher = divisao.conjunto_completo if completo else divisao.conjunto
+        fotos = escolher(raiz, nome, limite_por_dia=limites[nome])
         escritas = 0
         for foto in fotos:
             imagem = cv2.imread(str(foto.imagem))
@@ -97,8 +98,10 @@ def main() -> int:
     parser.add_argument("--saida", default="dados/yolo")
     parser.add_argument("--por-dia", type=int, default=20,
                         help="maximo de fotos por dia e por clima")
+    parser.add_argument("--completo", action="store_true",
+                        help="inclui a UFPR05 no treino, para o modelo da demonstracao")
     args = parser.parse_args()
-    exportar(args.raiz, Path(args.saida), args.por_dia)
+    exportar(args.raiz, Path(args.saida), args.por_dia, args.completo)
     return 0
 
 

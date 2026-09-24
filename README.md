@@ -29,11 +29,22 @@ caminhão. Depois cruza cada caixa encontrada com o contorno das vagas: vaga
 com veículo em cima está ocupada. Funciona em qualquer pátio sem treino
 nenhum, e é o caminho para quem só quer apontar a câmera e ver.
 
-**Detector de vagas** (`--detector vagas --pesos modelos/vagas.pt`). Usa os
-pesos que treinamos no PKLot e procura a vaga em si, já classificada. Custa
-um treino, e em troca enxerga o que o primeiro não enxerga: pátio grande
-fotografado de longe, onde o carro tem vinte pixels e o detector geral
-simplesmente não o vê.
+**Detector de vagas** (`--detector vagas`). Usa os pesos que treinamos no
+PKLot e procura a vaga em si, já classificada. Custa um treino, e em troca
+enxerga o que o primeiro não enxerga: pátio grande fotografado de longe, onde
+o carro tem vinte pixels e o detector geral simplesmente não o vê.
+
+Não é preciso escolher: cada mapa de vagas guarda qual detector funciona
+naquela câmera, medido e não chutado, e o programa avisa qual escolheu. Se os
+pesos treinados não estiverem em disco, ele cai no detector geral em vez de
+falhar.
+
+São dois arquivos de pesos, e a diferença entre eles importa:
+
+| Arquivo | Treinado com | Para quê |
+|---|---|---|
+| `modelos/vagas.pt` | as três câmeras | é o que roda na demonstração |
+| `modelos/vagas-experimento.pt` | só PUCPR e UFPR04 | responde "quanto se perde numa câmera nunca vista" |
 
 A diferença entre os dois está medida em [docs/RESULTADOS.md](docs/RESULTADOS.md),
 com número por estacionamento e por clima. O resumo:

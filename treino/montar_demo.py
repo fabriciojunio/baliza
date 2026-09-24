@@ -119,7 +119,10 @@ def parte_videos(raiz: str) -> dict:
         quadros = montar_video(fotos, DESTINO / "patios" / f"{apelido}.mp4")
 
         # Três fotos soltas do mesmo dia, para quem quiser testar imagem avulsa.
-        pasta_fotos = DESTINO / "fotos"
+        # Em pasta separada por câmera: o mapa de vagas só serve para a câmera
+        # que o gerou, e uma pasta misturada convida a rodar a pasta inteira
+        # contra o mapa errado, que devolve número sem sentido e sem erro.
+        pasta_fotos = DESTINO / "fotos" / apelido
         pasta_fotos.mkdir(parents=True, exist_ok=True)
         for indice in (0, len(fotos) // 2, len(fotos) - 1):
             origem = fotos[indice].imagem

@@ -46,13 +46,22 @@ corrige, ao custo de mais tempo por quadro.
 
 ```
 baliza rodar demo/patios/ufpr04.mp4 --mapa demo/mapas/ufpr04.json --mostrar
-baliza rodar demo/patios/pucpr.mp4 --mapa demo/mapas/pucpr.json --mostrar
-baliza rodar demo/patios/pucpr.mp4 --mapa demo/mapas/pucpr.json --mostrar \
-    --detector vagas --pesos modelos/vagas.pt
+baliza rodar demo/patios/pucpr.mp4  --mapa demo/mapas/pucpr.json  --mostrar
+baliza rodar demo/fotos/ufpr05      --mapa demo/mapas/ufpr05.json --mostrar
 ```
+
+Não precisa escolher o detector: cada mapa guarda qual deles funciona naquela
+câmera, e o programa diz qual escolheu e por quê ao iniciar. Para forçar o
+outro e mostrar a diferença, acrescente `--detector veiculos` ou
+`--detector vagas`.
 
 Espaço pausa, `q` encerra. Para gravar em vez de mostrar, troque `--mostrar`
 por `--gravar saida.mp4`.
+
+**Cuidado com o mapa errado.** O mapa de vagas vale só para a câmera que o
+gerou. Rodar as fotos da PUCPR contra o mapa da UFPR04 não dá erro, dá número
+sem sentido. É por isso que as fotos estão separadas em `demo/fotos/ufpr04`,
+`demo/fotos/ufpr05` e `demo/fotos/pucpr`.
 
 ## 4. Câmera ao vivo, se houver tempo
 

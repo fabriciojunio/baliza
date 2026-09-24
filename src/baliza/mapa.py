@@ -17,7 +17,8 @@ class MapaInvalido(ValueError):
 
 
 class Mapa:
-    def __init__(self, camera: str, vagas: list[Vaga], largura: int = 0, altura: int = 0):
+    def __init__(self, camera: str, vagas: list[Vaga], largura: int = 0, altura: int = 0,
+                 detector: str | None = None):
         if not vagas:
             raise MapaInvalido("mapa sem vaga nenhuma")
         vistos = set()
@@ -27,10 +28,17 @@ class Mapa:
             if len(vaga.contorno) < 3:
                 raise MapaInvalido(f"vaga {vaga.id} tem menos de tres pontos")
             vistos.add(vaga.id)
+        if detector not in (None, "veiculos", "vagas"):
+            raise MapaInvalido(f"detector recomendado desconhecido: {detector}")
         self.camera = camera
         self.vagas = vagas
         self.largura = largura
         self.altura = altura
+        # Qual detector funciona nesta câmera, medido e não chutado. O pátio
+        # distante precisa do modelo treinado; o pátio que o modelo nunca viu
+        # precisa do detector geral. Sem isso a demonstração abre no detector
+        # errado e mostra vaga ocupada pintada de verde.
+        self.detector = detector
 
     def __len__(self) -> int:
         return len(self.vagas)
@@ -51,6 +59,7 @@ class Mapa:
             "camera": self.camera,
             "largura": self.largura,
             "altura": self.altura,
+            "detector_recomendado": self.detector,
             "vagas": [
                 {
                     "id": vaga.id,
@@ -87,6 +96,7 @@ class Mapa:
             vagas=vagas,
             largura=int(dados.get("largura", 0)),
             altura=int(dados.get("altura", 0)),
+            detector=dados.get("detector_recomendado"),
         )
 
     @classmethod
@@ -125,4 +135,4 @@ def dividir_em_setores(mapa: Mapa, colunas: int = 2) -> Mapa:
                 setor = nome
                 break
         novas.append(Vaga(id=vaga.id, contorno=vaga.contorno, setor=setor))
-    return Mapa(mapa.camera, novas, mapa.largura, mapa.altura)
+    return Mapa(mapa.camera, novas, mapa.largura, mapa.altura, mapa.detector)

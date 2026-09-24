@@ -101,9 +101,18 @@ with st.sidebar:
     opcoes = ["veículos (YOLO11 do COCO, sem treino)"]
     if tem_treinado:
         opcoes.insert(0, "vagas (YOLO11 treinado no PKLot)")
-    escolha_modelo = st.radio("Detector", opcoes)
+    # A opção já abre no detector que funciona naquela câmera, medido e gravado
+    # no mapa. Sem isso o painel abre no detector errado e mostra vaga ocupada
+    # pintada de verde, que é a pior primeira impressão possível.
+    recomendado = Mapa.carregar(escolhido).detector
+    inicial = 0
+    if recomendado == "veiculos":
+        inicial = len(opcoes) - 1
+    escolha_modelo = st.radio("Detector", opcoes, index=inicial)
     modo = "vagas" if escolha_modelo.startswith("vagas") else "veiculos"
     pesos = str(PESOS_TREINADOS) if modo == "vagas" else str(RAIZ / "modelos" / "yolo11n.pt")
+    if recomendado and modo != recomendado:
+        st.caption(f"O medido para esta câmera é o detector **{recomendado}**.")
 
     tamanho = st.select_slider("Resolução de entrada", [640, 960, 1280, 1600], value=1280)
     janelas = st.selectbox(

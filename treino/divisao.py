@@ -45,6 +45,25 @@ def conjunto(
     raise ValueError(f"conjunto desconhecido: {nome}")
 
 
+# O modelo que vai para a demonstração precisa conhecer as três câmeras, e
+# para ele a divisão é outra: todas entram, separadas só por dia. O conjunto
+# acima continua existindo porque é ele que responde a pergunta científica,
+# "quanto o modelo perde numa câmera que nunca viu".
+TODOS = TREINO + TESTE
+
+
+def conjunto_completo(raiz: str, nome: str, limite_por_dia: int | None = 4) -> list[Foto]:
+    fotos = listar_fotos(raiz, estacionamentos=TODOS, limite_por_dia=limite_por_dia)
+    if nome == "treino":
+        return [f for f in fotos if dia_par(f)]
+    if nome in ("validacao", "teste"):
+        impares = [f for f in fotos if not dia_par(f)]
+        # Metade dos dias ímpares valida durante o treino, a outra metade fica
+        # guardada para medir no fim, sem ter influenciado nenhuma decisão.
+        return impares[::2] if nome == "validacao" else impares[1::2]
+    raise ValueError(f"conjunto desconhecido: {nome}")
+
+
 def resumo(raiz: str, limite_por_dia: int | None = 4) -> dict[str, dict]:
     saida = {}
     for nome in ("treino", "validacao", "teste"):

@@ -22,7 +22,20 @@ def test_valores_padrao_de_rodar():
     assert args.tamanho == 1280
     assert args.limiar == 0.30
     assert args.janela == 5
-    assert args.detector == "veiculos"
+    # Sem --detector o valor fica em aberto: quem decide e a recomendacao do mapa.
+    assert args.detector is None
+
+
+def test_grade_de_janelas_e_convertida():
+    args = construir_parser().parse_args(
+        ["rodar", "v.mp4", "--mapa", "m.json", "--janelas", "3x2"])
+    assert args.janelas == (3, 2)
+
+
+def test_grade_de_janelas_invalida():
+    with pytest.raises(SystemExit):
+        construir_parser().parse_args(
+            ["rodar", "v.mp4", "--mapa", "m.json", "--janelas", "tres"])
 
 
 def test_detector_invalido_e_rejeitado():
@@ -82,3 +95,47 @@ def test_lista_vazia_cai_na_demonstracao(monkeypatch):
                         lambda args: visto.setdefault("escolha", args.escolha) or 0)
     assert cli.main([]) == 0
     assert "escolha" in visto
+
+
+
+class MapaFalso:
+    def __init__(self, detector=None, camera="X"):
+        self.detector = detector
+        self.camera = camera
+
+
+def test_detector_explicito_ganha_do_mapa():
+    from baliza.cli import _resolver_detector
+
+    modo, _, motivo = _resolver_detector("veiculos", None, MapaFalso(detector="vagas"))
+    assert modo == "veiculos"
+    assert "linha de comando" in motivo
+
+
+def test_sem_escolha_vale_a_recomendacao_do_mapa(tmp_path):
+    from baliza.cli import _resolver_detector
+
+    pesos = tmp_path / "vagas.pt"
+    pesos.write_bytes(b"x")
+    modo, caminho, motivo = _resolver_detector(None, str(pesos), MapaFalso(detector="vagas"))
+    assert modo == "vagas"
+    assert caminho == str(pesos)
+    assert "recomendado" in motivo
+
+
+def test_mapa_sem_recomendacao_cai_no_detector_geral():
+    from baliza.cli import _resolver_detector
+
+    modo, _, motivo = _resolver_detector(None, None, MapaFalso())
+    assert modo == "veiculos"
+    assert motivo == "padrao"
+
+
+def test_pesos_treinados_ausentes_caem_no_geral_avisando(tmp_path):
+    """Numa maquina sem os pesos, a demonstracao tem que rodar assim mesmo."""
+    from baliza.cli import _resolver_detector
+
+    modo, _, motivo = _resolver_detector(None, str(tmp_path / "nao_existe.pt"),
+                                         MapaFalso(detector="vagas"))
+    assert modo == "veiculos"
+    assert "nao esta em disco" in motivo

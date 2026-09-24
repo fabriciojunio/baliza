@@ -14,6 +14,33 @@ from pathlib import Path
 
 RAIZ = Path(__file__).resolve().parents[2]
 DEMO = RAIZ / "demo"
+MODELOS = RAIZ / "modelos"
+
+
+def _resolver_detector(escolhido: str | None, pesos: str | None, mapa) -> tuple[str, str, str]:
+    """Decide qual detector usar, e explica a decisão.
+
+    Quem passa --detector manda. Sem isso vale a recomendação gravada no mapa,
+    que saiu de medição naquela câmera. Se o modelo treinado for o recomendado
+    mas os pesos não estiverem em disco, cai no detector geral avisando, em vez
+    de morrer com erro de arquivo.
+    """
+    if escolhido:
+        modo, motivo = escolhido, "pedido na linha de comando"
+    elif getattr(mapa, "detector", None):
+        modo, motivo = mapa.detector, f"recomendado para a camera {mapa.camera}"
+    else:
+        modo, motivo = "veiculos", "padrao"
+
+    if modo == "vagas":
+        caminho = Path(pesos) if pesos else MODELOS / "vagas.pt"
+        if not caminho.exists():
+            return ("veiculos", str(MODELOS / "yolo11n.pt"),
+                    f"{caminho.name} nao esta em disco, usando o detector geral")
+        return modo, str(caminho), motivo
+
+    caminho = Path(pesos) if pesos else MODELOS / "yolo11n.pt"
+    return modo, str(caminho), motivo
 
 
 def _comando_rodar(args) -> int:
@@ -24,12 +51,14 @@ def _comando_rodar(args) -> int:
     from .sistema import Baliza
 
     mapa = Mapa.carregar(args.mapa)
+    modo, pesos, motivo = _resolver_detector(args.detector, args.pesos, mapa)
     detector = abrir_detector(
-        modo="vagas" if args.detector == "vagas" else "veiculos",
-        pesos=args.pesos,
+        modo=modo,
+        pesos=pesos,
         confianca=args.confianca,
         tamanho=args.tamanho,
         dispositivo=args.dispositivo,
+        janelas=args.janelas,
     )
     registro = Registro(args.banco) if args.banco else None
     sistema = Baliza(mapa, detector, limiar=args.limiar, janela_suavizacao=args.janela,
@@ -41,7 +70,7 @@ def _comando_rodar(args) -> int:
         print(f"erro: {erro}", file=sys.stderr)
         return 2
 
-    print(f"camera {mapa.camera}, {len(mapa)} vagas, detector {args.detector}"
+    print(f"camera {mapa.camera}, {len(mapa)} vagas, detector {modo} ({motivo})"
           f" em {detector.dispositivo}")
     if args.mostrar:
         print("espaco pausa, q encerra")
@@ -117,13 +146,23 @@ def _comando_demonstracao(args) -> int:
     video = pasta / "patios" / f"{caminho_mapa.stem}.mp4"
     alvo = str(video) if video.exists() else str(pasta / "patios" / caminho_mapa.stem)
 
-    detector = abrir_detector("veiculos", args.pesos, tamanho=args.tamanho)
+    modo, pesos, motivo = _resolver_detector(args.detector, args.pesos, mapa)
+    print(f"detector {modo} ({motivo})")
+    detector = abrir_detector(modo, pesos, tamanho=args.tamanho)
     sistema = Baliza(mapa, detector)
     resultados = sistema.rodar(abrir_fonte(alvo), mostrar=not args.sem_janela)
     if resultados:
         ultimo = resultados[-1]
         print(f"\n{ultimo.livres} vagas livres de {ultimo.total}")
     return 0
+
+
+def _grade(texto: str) -> tuple[int, int]:
+    try:
+        colunas, linhas = texto.lower().split("x")
+        return int(colunas), int(linhas)
+    except ValueError as erro:
+        raise argparse.ArgumentTypeError(f"grade invalida: {texto} (use 3x2)") from erro
 
 
 def construir_parser() -> argparse.ArgumentParser:
@@ -136,7 +175,8 @@ def construir_parser() -> argparse.ArgumentParser:
     rodar = sub.add_parser("rodar", help="processa video, pasta de fotos, imagem ou camera")
     rodar.add_argument("alvo", help="arquivo, pasta, indice de camera ou URL rtsp")
     rodar.add_argument("--mapa", required=True, help="JSON com o mapa de vagas")
-    rodar.add_argument("--detector", choices=("veiculos", "vagas"), default="veiculos")
+    rodar.add_argument("--detector", choices=("veiculos", "vagas"), default=None,
+                       help="sem isso vale a recomendacao gravada no mapa")
     rodar.add_argument("--pesos", default=None, help="pesos do YOLO")
     rodar.add_argument("--tamanho", type=int, default=1280, help="lado da entrada do modelo")
     rodar.add_argument("--confianca", type=float, default=0.25)
@@ -151,6 +191,8 @@ def construir_parser() -> argparse.ArgumentParser:
     rodar.add_argument("--banco", default=None, help="arquivo SQLite do historico")
     rodar.add_argument("--csv", default=None, help="exporta o historico ao final")
     rodar.add_argument("--dispositivo", default="auto", help="auto, cpu ou cuda:0")
+    rodar.add_argument("--janelas", default=None, type=_grade,
+                       help="grade de janelas deslizantes, por exemplo 3x2")
     rodar.set_defaults(funcao=_comando_rodar)
 
     mapa = sub.add_parser("mapa-do-pklot", help="gera o mapa de vagas a partir do XML do PKLot")
@@ -164,6 +206,7 @@ def construir_parser() -> argparse.ArgumentParser:
     demo.add_argument("--pasta", default=None)
     demo.add_argument("--escolha", type=int, default=None)
     demo.add_argument("--pesos", default=None)
+    demo.add_argument("--detector", choices=("veiculos", "vagas"), default=None)
     demo.add_argument("--tamanho", type=int, default=1280)
     demo.add_argument("--sem-janela", action="store_true")
     demo.set_defaults(funcao=_comando_demonstracao)

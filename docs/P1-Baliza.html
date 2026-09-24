@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Baliza - Proposta de Projeto de Visão Computacional (P1)</title>
+<style>
+  @page { size: A4; }
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 9.8pt;
+    line-height: 1.42;
+    color: #16212b;
+    background: #fff;
+    text-align: justify;
+    hyphens: auto;
+  }
+
+  h1, h2, h3, h4, th, figcaption, .rotulo, .selo, .tab-legenda {
+    font-family: "Segoe UI", Calibri, Arial, sans-serif;
+    text-align: left;
+  }
+
+  h1 { font-size: 21pt; line-height: 1.12; margin: 0 0 4pt; color: #1f4160; letter-spacing: -0.4px; }
+  h2 {
+    font-size: 12pt; margin: 14pt 0 6pt; color: #1f4160;
+    padding-bottom: 4pt; border-bottom: 1.5px solid #1f4160;
+    page-break-after: avoid;
+  }
+  h3 { font-size: 10.4pt; margin: 10pt 0 3pt; color: #16212b; page-break-after: avoid; }
+  h4 { font-size: 9pt; margin: 8pt 0 2pt; color: #4a5b6b; text-transform: uppercase;
+       letter-spacing: 0.6px; page-break-after: avoid; }
+
+  p { margin: 0 0 6pt; }
+  ul, ol { margin: 0 0 6pt; padding-left: 16pt; }
+  li { margin-bottom: 2pt; }
+  code, .mono { font-family: Consolas, "Courier New", monospace; font-size: 8.4pt;
+                background: #f1f5f8; padding: 0 3px; border-radius: 2px; }
+
+  .selo { font-size: 8pt; letter-spacing: 2px; text-transform: uppercase;
+          color: #4a5b6b; margin-bottom: 8pt; }
+  .subtitulo { font-size: 11.5pt; color: #4a5b6b; font-style: italic; margin: 0 0 12pt; }
+  .regua { height: 3px; background: #1f4160; width: 70px; margin: 0 0 12pt; }
+
+  .resumo { background: #e9eff5; border-left: 3px solid #1f4160; padding: 8pt 10pt;
+            margin: 0 0 12pt; font-size: 9.4pt; }
+  .resumo p:last-child { margin-bottom: 0; }
+
+  table { width: 100%; border-collapse: collapse; margin: 5pt 0 8pt; font-size: 8.8pt;
+          page-break-inside: avoid; }
+  th { background: #1f4160; color: #fff; text-align: left; padding: 4pt 6pt;
+       font-size: 8.6pt; font-weight: 600; }
+  td { padding: 3.5pt 6pt; border-bottom: 1px solid #ccd6de; vertical-align: top; }
+  tbody tr:nth-child(even) td { background: #f5f8fa; }
+  td.c, th.c { text-align: center; }
+  .x { color: #1f4160; font-weight: 700; }
+  .bom { color: #2e6f3e; font-weight: 600; }
+  .ruim { color: #a33227; font-weight: 600; }
+
+  figure { margin: 7pt 0 4pt; page-break-inside: avoid; }
+  figure svg, figure img { display: block; width: 100%; height: auto; }
+  figure img { border: 1px solid #ccd6de; }
+  figcaption, .tab-legenda { font-size: 8pt; color: #4a5b6b; margin: 3pt 0 9pt; }
+  .tab-legenda { margin-top: -6pt; }
+
+  .quebra { page-break-before: always; }
+  .juntos { page-break-inside: avoid; }
+
+  .nota { border: 1px solid #ccd6de; border-left: 3px solid #a33227; padding: 7pt 9pt;
+          font-size: 9pt; margin: 8pt 0 9pt; background: #fdfaf9; }
+  .nota p:last-child { margin-bottom: 0; }
+
+  .ref { font-size: 8.6pt; text-indent: -16pt; padding-left: 16pt; margin-bottom: 6pt;
+         text-align: left; }
+</style>
+</head>
+<body>
+
+<section>
+  <div class="selo">Projeto de Vis&atilde;o Computacional &middot; Entrega P1</div>
+  <h1>Baliza</h1>
+  <p class="subtitulo">Ocupação de vagas de estacionamento por câmera, sem um sensor em cada vaga</p>
+  <div class="regua"></div>
+
+  <div class="resumo">
+    <p>Estacionamento grande tem dois problemas que se alimentam: o motorista não sabe onde há
+    vaga e a administração não sabe onde falta. A resposta usual, um sensor dentro de cada vaga,
+    resolve com precisão e cobra um dispositivo, um cabo ou uma bateria por vaga. O Baliza parte de
+    outro lugar: a câmera já está instalada por causa da segurança, e um único quadro dela enquadra
+    dezenas de vagas ao mesmo tempo.</p>
+    <p><strong>Esta entrega não é só planejamento.</strong> O sistema está construído e medido sobre
+    a base pública PKLot, produzida em estacionamentos da UFPR e da PUCPR. O que o projeto descobriu
+    no caminho é o que dá forma a este documento: o caminho fácil funciona muito bem em uma câmera
+    próxima e falha de um jeito perigoso em uma câmera distante, e é esse fracasso que justifica
+    treinar um modelo próprio.</p>
+  </div>
+
+  <h2 style="margin-top:4pt">1. Identificação do grupo</h2>
+  <table>
+    <tbody>
+      <tr><td style="width:30%"><strong>Nome do projeto</strong></td><td>Baliza &mdash; monitoramento de ocupação de vagas de estacionamento por visão computacional</td></tr>
+      <tr><td><strong>Integrantes</strong></td><td>Fabrício Júnio Almeida Dias<br>Camila Pereira Raimundo<br>Luan Miranda Padilha<br>Kauã Limão Nunes</td></tr>
+      <tr><td><strong>Curso</strong></td><td>Bacharelado em Ciência da Computação &mdash; UNISAGRADO</td></tr>
+      <tr><td><strong>Turma</strong></td><td>6º semestre &mdash; 2026/2</td></tr>
+      <tr><td><strong>Disciplina</strong></td><td>Visão Computacional</td></tr>
+      <tr><td><strong>Data de entrega</strong></td><td>25 de setembro de 2026</td></tr>
+      <tr><td><strong>Código</strong></td><td class="mono">github.com/fabriciojunio/baliza</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section>
+  <h2>2. Descrição do problema</h2>
+
+  <h3>2.1 O que será resolvido</h3>
+  <p>O sistema responde, a cada leitura e para cada vaga coberta pela câmera, uma pergunta binária:
+  <strong>tem veículo aqui ou não tem?</strong> A partir dela entrega o que interessa a quem usa e a
+  quem administra o pátio: quantas vagas livres existem em cada setor agora, onde elas estão, e como
+  a ocupação variou ao longo do dia.</p>
+  <p>Não se trata de identificar quem estacionou nem de ler placa. A unidade de análise é a vaga, e
+  essa escolha é deliberada: mantém o escopo no tamanho de um semestre e evita tratar dado pessoal,
+  assunto da seção 6.4.</p>
+
+  <h3>2.2 Por que o problema importa</h3>
+  <p>Procurar vaga é trânsito que não vai a lugar nenhum. A revisão de Shoup (2006) reuniu dezesseis
+  estudos feitos entre 1927 e 2001 em onze cidades de quatro continentes e encontrou, em média,
+  <strong>30% dos carros em circulação em áreas centrais congestionadas rodando à procura de
+  vaga</strong>, com variação grande entre os casos, de 8% a 74%. O número costuma ser citado sem
+  essa ressalva, como se valesse para o trânsito urbano inteiro, o que não é verdade: ele vale para
+  vias centrais onde a vaga de rua é barata e disputada. Ainda assim a ordem de grandeza sustenta o
+  argumento, e o mesmo efeito reaparece em escala menor dentro de um pátio fechado de shopping,
+  hospital ou campus, na forma de fila na cancela e de volta no corredor.</p>
+  <p>Para quem administra o pátio o custo é outro e igualmente concreto: sem medição, o
+  dimensionamento é feito no olho. Não se sabe qual setor satura primeiro, a que horas, nem se
+  convém redistribuir vagas entre visitante e funcionário.</p>
+
+  <h3>2.3 Quem se beneficia</h3>
+  <table>
+    <thead><tr><th style="width:26%">Beneficiário</th><th>O que ganha</th></tr></thead>
+    <tbody>
+      <tr><td>Motorista</td><td>Sabe antes de entrar, ou logo na entrada, quantas vagas restam e em qual setor. Deixa de circular procurando.</td></tr>
+      <tr><td>Administração do estacionamento</td><td>Ocupação medida por hora e por setor, base para decidir sinalização, tarifa e redistribuição de vagas.</td></tr>
+      <tr><td>Instituição (campus, hospital, shopping)</td><td>Dado objetivo sobre o horário de pico, útil para escalonar horários e para justificar ampliação.</td></tr>
+      <tr><td>Portaria e segurança</td><td>Uma tela a mais sobre o circuito de câmeras que já existe, sem nada novo no piso.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>2.4 Como o problema é resolvido hoje</h3>
+  <table>
+    <thead><tr><th style="width:22%">Solução atual</th><th style="width:36%">Como funciona</th><th>Limitação</th></tr></thead>
+    <tbody>
+      <tr><td>Contagem na cancela</td><td>Conta entradas e saídas e mostra um total de vagas livres no letreiro.</td><td>Sabe o total, nunca a localização. O erro acumula ao longo do dia e só zera quando o pátio esvazia.</td></tr>
+      <tr><td>Sensor por vaga</td><td>Sensor ultrassônico no teto ou magnético embutido no piso, um por vaga, com indicador luminoso.</td><td>Precisão alta e custo proporcional ao número de vagas: um dispositivo, cabeamento ou bateria e manutenção para cada uma.</td></tr>
+      <tr><td>Nenhuma</td><td>O motorista descobre circulando; a administração estima de memória.</td><td>É o caso mais comum, inclusive em estacionamentos grandes de Bauru.</td></tr>
+    </tbody>
+  </table>
+  <p>A oportunidade da visão computacional está no meio termo: <strong>uma câmera de segurança comum
+  já enquadra dezenas de vagas</strong>, e em boa parte dos pátios ela já está instalada e ligada. O
+  custo marginal de extrair ocupação desse vídeo é software, não obra. O preço a pagar é técnico, e
+  o projeto trata dele de frente: oclusão, sombra, chuva e, principalmente, distância da câmera.</p>
+</section>
+
+<section>
+  <h2>3. Objetivos do projeto</h2>
+
+  <h3>Objetivo geral</h3>
+  <p>Desenvolver um sistema de visão computacional que, a partir do vídeo de uma câmera fixa,
+  classifique cada vaga de estacionamento como livre ou ocupada, apresente o resultado em uma
+  interface web e registre o histórico de ocupação, funcionando em hardware doméstico e sem
+  qualquer sensor instalado no pátio.</p>
+
+  <h3>Objetivos específicos</h3>
+  <ol>
+    <li><strong>Montar e tratar a base de imagens</strong> a partir do PKLot, com divisão por câmera
+    e por dia, e não aleatória, somada a uma captura própria em Bauru para teste de generalização.</li>
+    <li><strong>Comparar duas abordagens de detecção</strong>: usar os pesos gerais do YOLO11 para
+    achar veículos e cruzar com o mapa de vagas, ou treinar um modelo que detecte a vaga já
+    classificada.</li>
+    <li><strong>Medir a queda de desempenho em câmera nunca vista</strong>, relatando separadamente
+    o erro caro (dizer que a vaga está livre quando está ocupada) e o erro barato (o inverso).</li>
+    <li><strong>Entregar um painel web</strong> que aceite imagem, vídeo ou câmera ao vivo, mostre o
+    quadro anotado, o total de vagas livres por setor e o gráfico de ocupação do dia.</li>
+    <li><strong>Persistir o histórico</strong> em banco local, exportável em CSV, para que a
+    ocupação por hora possa ser analisada depois do fato.</li>
+  </ol>
+</section>
+
+<section class="quebra">
+  <h2>4. Fundamentação tecnológica</h2>
+  <p>A regra que orientou a escolha foi conservadora: preferir o que roda em uma GTX 1650 de 4 GB,
+  o que tem documentação estável e o que o grupo já usou antes. Não há nesta lista nenhuma
+  tecnologia que dependa de crédito pago em nuvem ou de hardware que não esteja em mãos. Tudo
+  abaixo está instalado e em uso; não é lista de intenção.</p>
+
+  <table>
+    <thead><tr><th style="width:18%">Tecnologia</th><th style="width:29%">Finalidade no projeto</th><th>Justificativa da escolha</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>Python 3.12</strong></td>
+        <td>Linguagem de todo o sistema, do treino à interface.</td>
+        <td>É onde vive o ecossistema de visão computacional. A 3.14, que já está na máquina, ainda não tem roda do PyTorch, e isso decidiu a versão.</td>
+      </tr>
+      <tr>
+        <td><strong>OpenCV 4.12</strong></td>
+        <td>Leitura de vídeo e câmera, recorte, desenho das vagas e do placar sobre o quadro.</td>
+        <td>Padrão de fato para captura e manipulação de quadro. Fixado na série 4.x: a 5.0 removeu APIs clássicas que ainda usamos.</td>
+      </tr>
+      <tr>
+        <td><strong>Ultralytics 8.4 / YOLO11n</strong></td>
+        <td>Detector, nas duas modalidades: veículo (pesos do COCO) e vaga (pesos treinados por nós).</td>
+        <td>Versão madura, com receita de treino estável. O <span class="mono">yolo11n</span> tem 2,6 M de parâmetros e 6,5 GFLOPs, cabe nos 4 GB e roda em tempo real.</td>
+      </tr>
+      <tr>
+        <td><strong>PyTorch 2.11 + CUDA 12.8</strong></td>
+        <td>Backend de treino e de inferência em GPU.</td>
+        <td>Dependência do Ultralytics. A roda de CPU que vem por padrão no Windows treina, mas em ordens de grandeza a mais de tempo; a versão com CUDA foi instalada de propósito.</td>
+      </tr>
+      <tr>
+        <td><strong>SQLite</strong></td>
+        <td>Histórico de leituras: câmera, vaga, estado, confiança, cobertura e instante.</td>
+        <td>Banco em arquivo único, sem servidor para instalar. O volume previsto é trivial para ele e o arquivo acompanha a demonstração.</td>
+      </tr>
+      <tr>
+        <td><strong>Streamlit</strong></td>
+        <td>Painel web: escolha da câmera, envio de imagem ou vídeo, quadro anotado, contagem por setor e curva do dia.</td>
+        <td>Interface utilizável escrita em Python puro, sem HTML nem rota. Flask exigiria template e front separados para o mesmo resultado.</td>
+      </tr>
+      <tr>
+        <td><strong>pytest</strong></td>
+        <td>107 testes sobre geometria, decisão de ocupação, suavização, persistência, captura e linha de comando.</td>
+        <td>Sem teste, regressão em código de visão passa despercebida: o programa continua rodando e só o número muda.</td>
+      </tr>
+      <tr>
+        <td><strong>Git e GitHub</strong></td>
+        <td>Versionamento, revisão entre os integrantes e distribuição dos pesos por release.</td>
+        <td>Os pesos treinados têm alguns megabytes e não entram no repositório; vão por release, como o grupo já fez em projeto anterior.</td>
+      </tr>
+      <tr>
+        <td><strong>Google Colab</strong></td>
+        <td>Plano B de treino, com GPU T4 gratuita.</td>
+        <td>Não foi necessário: o treino coube na máquina local. Fica registrado como saída caso um experimento maior não caiba na VRAM.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>4.1 O que foi considerado e descartado</h3>
+  <table>
+    <thead><tr><th style="width:24%">Alternativa</th><th>Por que ficou de fora</th></tr></thead>
+    <tbody>
+      <tr><td>YOLO26 (jan/2026)</td><td>É mais novo, mais leve (2,4 M de parâmetros, 5,5 GFLOPs) e traz inferência sem NMS, com 40,9 de mAP contra 39,5 do YOLO11n no COCO. Fica como experimento comparativo até a entrega final: material de apoio e resposta a problema de treino ainda são mais escassos que os do YOLO11, e o cronograma não sobreviveria a uma surpresa de ferramenta.</td></tr>
+      <tr><td>YOLO12</td><td>A própria Ultralytics recomenda YOLO11 ou YOLO26 para produção, por instabilidade de treino e consumo de memória maior. Em 4 GB de VRAM isso decide.</td></tr>
+      <tr><td>Segmentação semântica</td><td>Resolveria o problema, mas exige máscara por vaga na anotação. O PKLot vem em polígono de quatro pontos; a resposta que se quer é binária, e a máscara não a melhora.</td></tr>
+      <tr><td>Subtração de fundo</td><td>É barata e o grupo já a implementou em projeto anterior. Ela responde "isso se moveu?", e carro parado há três horas não se move: para ocupação de vaga a pergunta está errada desde o começo.</td></tr>
+      <tr><td>Raspberry Pi</td><td>Nenhum integrante tem a placa, e comprar cria dependência de prazo. O sistema roda em PC; a portabilidade para borda fica como trabalho futuro, com o modelo exportável em ONNX por um comando.</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section class="quebra">
+  <h2>5. Arquitetura da solução</h2>
+  <p>O sistema é um laço de cinco estágios. O estágio que costuma faltar em proposta de projeto, e
+  que aqui é explícito, é o de <strong>decisão temporal</strong>: uma leitura isolada oscila, e o que
+  vai para a tela precisa ser estável.</p>
+
+  <figure>
+    <svg viewBox="0 0 720 430" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, Arial, sans-serif">
+      <defs>
+        <marker id="seta" markerWidth="9" markerHeight="9" refX="8" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#1f4160"/>
+        </marker>
+      </defs>
+
+      <g text-anchor="middle">
+        <rect x="4" y="30" width="126" height="360" fill="#f5f8fa" stroke="#dde5ea"/>
+        <rect x="138" y="30" width="150" height="360" fill="#f5f8fa" stroke="#dde5ea"/>
+        <rect x="296" y="30" width="150" height="360" fill="#eef3f7" stroke="#dde5ea"/>
+        <rect x="454" y="30" width="126" height="360" fill="#f5f8fa" stroke="#dde5ea"/>
+        <rect x="588" y="30" width="128" height="360" fill="#f5f8fa" stroke="#dde5ea"/>
+        <text x="67" y="22" font-size="9.5" font-weight="600" fill="#1f4160">1. ENTRADA</text>
+        <text x="213" y="22" font-size="9.5" font-weight="600" fill="#1f4160">2. PRE-PROCESSO</text>
+        <text x="371" y="22" font-size="9.5" font-weight="600" fill="#1f4160">3. DETECCAO</text>
+        <text x="517" y="22" font-size="9.5" font-weight="600" fill="#1f4160">4. DECISAO</text>
+        <text x="652" y="22" font-size="9.5" font-weight="600" fill="#1f4160">5. SAIDA</text>
+      </g>
+
+      <g font-size="9.5" fill="#16212b">
+        <rect x="16" y="52" width="102" height="40" rx="4" fill="#fff" stroke="#1f4160" stroke-width="1.2"/>
+        <text x="67" y="70" text-anchor="middle">Camera fixa</text>
+        <text x="67" y="83" text-anchor="middle" font-size="8.5" fill="#6b7a88">RTSP ou USB</text>
+
+        <rect x="16" y="104" width="102" height="40" rx="4" fill="#fff" stroke="#1f4160" stroke-width="1.2"/>
+        <text x="67" y="122" text-anchor="middle">Video gravado</text>
+        <text x="67" y="135" text-anchor="middle" font-size="8.5" fill="#6b7a88">mp4 / avi / mkv</text>
+
+        <rect x="16" y="156" width="102" height="40" rx="4" fill="#fff" stroke="#1f4160" stroke-width="1.2"/>
+        <text x="67" y="174" text-anchor="middle">Imagem ou pasta</text>
+        <text x="67" y="187" text-anchor="middle" font-size="8.5" fill="#6b7a88">envio pelo painel</text>
+
+        <rect x="16" y="296" width="102" height="56" rx="4" fill="#fdf6ec" stroke="#b07d2b" stroke-width="1.2" stroke-dasharray="3 2"/>
+        <text x="67" y="316" text-anchor="middle" font-size="9">Mapa de vagas</text>
+        <text x="67" y="329" text-anchor="middle" font-size="8.5" fill="#6b7a88">poligono, id e</text>
+        <text x="67" y="340" text-anchor="middle" font-size="8.5" fill="#6b7a88">setor, em JSON</text>
+
+        <rect x="150" y="70" width="126" height="44" rx="4" fill="#fff" stroke="#1f4160" stroke-width="1.2"/>
+        <text x="213" y="88" text-anchor="middle">Amostragem</text>
+        <text x="213" y="101" text-anchor="middle" font-size="8.5" fill="#6b7a88">1 leitura a cada N s</text>
+
+        <rect x="150" y="128" width="126" height="44" rx="4" fill="#fff" stroke="#1f4160" stroke-width="1.2"/>
+        <text x="213" y="146" text-anchor="middle">Letterbox 1280</text>
+        <text x="213" y="159" text-anchor="middle" font-size="8.5" fill="#6b7a88">mantem a proporcao</text>
+
+        <rect x="150" y="186" width="126" height="52" rx="4" fill="#fff" stroke="#1f4160" stroke-width="1.2"/>
+        <text x="213" y="204" text-anchor="middle">Janelas (opcional)</text>
+        <text x="213" y="217" text-anchor="middle" font-size="8.5" fill="#6b7a88">recorta 3x2 quando</text>
+        <text x="213" y="228" text-anchor="middle" font-size="8.5" fill="#6b7a88">a camera e distante</text>
+
+        <rect x="308" y="62" width="126" height="56" rx="4" fill="#1f4160" stroke="#1f4160"/>
+        <text x="371" y="82" text-anchor="middle" fill="#fff" font-weight="600">YOLO11n veiculos</text>
+        <text x="371" y="95" text-anchor="middle" fill="#cddce8" font-size="8.5">pesos do COCO</text>
+        <text x="371" y="108" text-anchor="middle" fill="#cddce8" font-size="8.5">sem treino</text>
+
+        <rect x="308" y="130" width="126" height="56" rx="4" fill="#2e6f3e" stroke="#2e6f3e"/>
+        <text x="371" y="150" text-anchor="middle" fill="#fff" font-weight="600">YOLO11n vagas</text>
+        <text x="371" y="163" text-anchor="middle" fill="#d6e8da" font-size="8.5">treinado no PKLot</text>
+        <text x="371" y="176" text-anchor="middle" fill="#d6e8da" font-size="8.5">2 classes</text>
+
+        <rect x="308" y="206" width="126" height="56" rx="4" fill="#fff" stroke="#1f4160" stroke-width="1.2"/>
+        <text x="371" y="224" text-anchor="middle">Cruzamento</text>
+        <text x="371" y="237" text-anchor="middle" font-size="8.5" fill="#6b7a88">cobertura da vaga</text>
+        <text x="371" y="250" text-anchor="middle" font-size="8.5" fill="#6b7a88">ou IoU com o mapa</text>
+
+        <rect x="466" y="90" width="102" height="60" rx="4" fill="#fff" stroke="#1f4160" stroke-width="1.2"/>
+        <text x="517" y="110" text-anchor="middle">Suavizacao</text>
+        <text x="517" y="123" text-anchor="middle" font-size="8.5" fill="#6b7a88">voto das 5</text>
+        <text x="517" y="136" text-anchor="middle" font-size="8.5" fill="#6b7a88">ultimas leituras</text>
+
+        <rect x="466" y="166" width="102" height="56" rx="4" fill="#fff" stroke="#1f4160" stroke-width="1.2"/>
+        <text x="517" y="186" text-anchor="middle">Estado da vaga</text>
+        <text x="492" y="206" text-anchor="middle" font-size="8.5" fill="#2e6f3e" font-weight="600">livre</text>
+        <text x="542" y="206" text-anchor="middle" font-size="8.5" fill="#a33227" font-weight="600">ocupada</text>
+
+        <rect x="466" y="240" width="102" height="52" rx="4" fill="#eef3f7" stroke="#1f4160" stroke-width="1.2"/>
+        <text x="517" y="260" text-anchor="middle">SQLite</text>
+        <text x="517" y="273" text-anchor="middle" font-size="8.5" fill="#6b7a88">historico por</text>
+        <text x="517" y="284" text-anchor="middle" font-size="8.5" fill="#6b7a88">vaga e instante</text>
+
+        <rect x="600" y="52" width="104" height="46" rx="4" fill="#fff" stroke="#1f4160" stroke-width="1.2"/>
+        <text x="652" y="72" text-anchor="middle">Painel Streamlit</text>
+        <text x="652" y="85" text-anchor="middle" font-size="8.5" fill="#6b7a88">livres por setor</text>
+
+        <rect x="600" y="110" width="104" height="46" rx="4" fill="#fff" stroke="#1f4160" stroke-width="1.2"/>
+        <text x="652" y="130" text-anchor="middle">Quadro anotado</text>
+        <text x="652" y="143" text-anchor="middle" font-size="8.5" fill="#6b7a88">uma caixa por vaga</text>
+
+        <rect x="600" y="168" width="104" height="46" rx="4" fill="#fff" stroke="#1f4160" stroke-width="1.2"/>
+        <text x="652" y="188" text-anchor="middle">Curva do dia</text>
+        <text x="652" y="201" text-anchor="middle" font-size="8.5" fill="#6b7a88">ocupacao por hora</text>
+
+        <rect x="600" y="226" width="104" height="46" rx="4" fill="#fff" stroke="#1f4160" stroke-width="1.2"/>
+        <text x="652" y="246" text-anchor="middle">Exportacao</text>
+        <text x="652" y="259" text-anchor="middle" font-size="8.5" fill="#6b7a88">CSV e video</text>
+      </g>
+
+      <g stroke="#1f4160" stroke-width="1.3" fill="none" marker-end="url(#seta)">
+        <path d="M118,72 L150,86"/>
+        <path d="M118,124 L150,92"/>
+        <path d="M118,176 L150,98"/>
+        <path d="M213,114 L213,126"/>
+        <path d="M213,172 L213,184"/>
+        <path d="M276,150 L308,98"/>
+        <path d="M276,212 L308,158"/>
+        <path d="M371,118 L371,204" stroke-dasharray="3 3"/>
+        <path d="M118,320 L308,244"/>
+        <path d="M434,234 L466,140"/>
+        <path d="M517,150 L517,164"/>
+        <path d="M517,222 L517,238"/>
+        <path d="M568,190 L600,150"/>
+        <path d="M568,266 L600,250"/>
+        <path d="M568,266 L600,200"/>
+      </g>
+
+      <text x="360" y="410" text-anchor="middle" font-size="8.5" fill="#6b7a88">
+        Os dois detectores sao intercambiaveis: o resto do sistema nao sabe qual deles esta carregado.
+      </text>
+    </svg>
+    <figcaption><strong>Figura 1.</strong> Arquitetura do Baliza. A faixa 3 é o núcleo de visão
+    computacional, com os dois detectores que a seção 7 compara; a faixa 4 é o que impede o painel
+    de piscar entre livre e ocupada a cada quadro.</figcaption>
+  </figure>
+
+  <h3>5.1 O que cada estágio faz</h3>
+  <p><strong>Entrada.</strong> Três fontes, o mesmo código: câmera ao vivo por RTSP ou USB, arquivo
+  de vídeo e imagem ou pasta de imagens. No Windows a abertura da câmera tenta Media Foundation,
+  depois DirectShow e por fim o padrão do sistema, e só aceita o backend que realmente entregar um
+  quadro, porque abrir sem falhar não garante que venha imagem.</p>
+  <p><strong>Pré-processamento.</strong> Estacionamento muda devagar. Processar trinta quadros por
+  segundo é desperdício, então o sistema aceita um intervalo entre leituras e reserva a taxa cheia
+  para a demonstração. O quadro vai para o modelo a 1280 pixels com letterbox, preservando a
+  proporção. Opcionalmente é recortado em uma grade de janelas com sobreposição, recurso que a
+  seção 7.4 mede.</p>
+  <p><strong>Detecção.</strong> Um dos dois detectores. O de veículos devolve carro, moto, ônibus e
+  caminhão; o de vagas devolve a vaga já rotulada. Nos dois casos o resultado é uma lista de caixas
+  com classe e confiança, e o cruzamento com o mapa de vagas acontece depois, no mesmo lugar.</p>
+  <p><strong>Decisão.</strong> O estado publicado de uma vaga é o voto da maioria das cinco últimas
+  leituras. Isso custa alguns segundos de atraso na troca de estado, irrelevante para
+  estacionamento, e elimina o pisca-pisca causado por pedestre, farol e pássaro.</p>
+
+  <h3>5.2 Estrutura do código</h3>
+  <p>A separação segue o que já deu certo em projetos anteriores do grupo: o núcleo de visão não
+  conhece a interface, e a interface não conhece o modelo.</p>
+  <table>
+    <thead><tr><th style="width:27%">Módulo</th><th>Responsabilidade</th></tr></thead>
+    <tbody>
+      <tr><td class="mono">baliza/geometria.py</td><td>Interseção entre o polígono da vaga e a caixa do detector, por recorte de Sutherland-Hodgman.</td></tr>
+      <tr><td class="mono">baliza/mapa.py</td><td>Carrega, valida e grava o mapa de vagas; divide o pátio em setores.</td></tr>
+      <tr><td class="mono">baliza/pklot.py</td><td>Leitura da base: varredura das pastas, contorno das vagas e rótulo verdadeiro.</td></tr>
+      <tr><td class="mono">baliza/deteccao.py</td><td>Os dois detectores e a variante em janelas, mais a supressão de sobreposição.</td></tr>
+      <tr><td class="mono">baliza/ocupacao.py</td><td>Regra de decisão: cobertura da vaga ou IoU, conforme o detector.</td></tr>
+      <tr><td class="mono">baliza/suavizacao.py</td><td>Voto de maioria das últimas leituras, e <span class="mono">registro.py</span>, que grava o histórico em SQLite e exporta em CSV.</td></tr>
+      <tr><td class="mono">baliza/captura.py</td><td>Fontes de quadro (câmera, vídeo, imagem, pasta) e <span class="mono">desenho.py</span>, que anota o quadro.</td></tr>
+      <tr><td class="mono">baliza/sistema.py</td><td>O laço que junta tudo.</td></tr>
+      <tr><td class="mono">painel/app.py</td><td>Streamlit. Só chama o núcleo e desenha a tela.</td></tr>
+      <tr><td class="mono">treino/</td><td>Divisão da base, calibração, exportação para YOLO, treino, avaliação, figuras e pacote de demonstração. Fora do pacote instalável.</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section>
+  <h2>6. Base de dados e imagens</h2>
+
+  <h3>6.1 Fonte dos dados</h3>
+  <p><strong>PKLot</strong> é a base principal e a escolha quase óbvia para este problema. Foi
+  produzida por Almeida et al. (2015) na Universidade Federal do Paraná e na PUC do Paraná, em
+  Curitiba, com fotos tiradas de cinco em cinco minutos ao longo de meses, em dias de sol, nublados
+  e de chuva. São <strong>12.417 imagens de pátio e 695.899 recortes de vaga</strong> conferidos e
+  rotulados um a um, com 337.780 ocupados e 358.071 livres, distribuição praticamente equilibrada.
+  Ser brasileira não é detalhe estético: os carros, a pintura do solo e a luz são os daqui.</p>
+  <p>O pacote tem 4,9 GB, é aberto e não exige cadastro. Baixamos do servidor da própria UFPR e
+  extraímos apenas as fotos de pátio inteiro com os XMLs, descartando os recortes já segmentados,
+  que servem à abordagem de classificação e não à de detecção. A licença é CC BY 4.0 e exige citar o
+  artigo original, o que a seção 12 faz.</p>
+  <p>Cada foto vem com um XML que traz, para cada vaga, um quadrilátero de quatro pontos e o
+  atributo de ocupação. É daí que sai, de graça, o mapa de vagas de cada câmera: não foi preciso
+  demarcar vaga nenhuma à mão para trabalhar com esta base.</p>
+
+  <h3>6.2 Quantidade, classes e anotação</h3>
+  <table>
+    <thead><tr><th>Estacionamento</th><th class="c">Fotos</th><th class="c">Vagas por foto</th><th>Característica da câmera</th></tr></thead>
+    <tbody>
+      <tr><td>UFPR04</td><td class="c">3.791</td><td class="c">28</td><td>Quarto andar, pátio próximo. Carro grande no quadro.</td></tr>
+      <tr><td>UFPR05</td><td class="c">4.152</td><td class="c">40</td><td>Quinto andar, ângulo mais aberto.</td></tr>
+      <tr><td>PUCPR</td><td class="c">4.474</td><td class="c">100</td><td>Décimo andar, pátio grande e distante. Carro com poucas dezenas de pixels.</td></tr>
+      <tr><td><strong>Total</strong></td><td class="c"><strong>12.417</strong></td><td class="c">&mdash;</td><td>12.416 XMLs, 2 classes (<span class="mono">vaga-livre</span> e <span class="mono">vaga-ocupada</span>), anotação em polígono de quatro pontos</td></tr>
+    </tbody>
+  </table>
+  <p class="tab-legenda">Tabela 3. Contagem feita na base extraída, não copiada do artigo. A
+  diferença de uma unidade entre fotos e XMLs está na base original.</p>
+
+  <div class="nota">
+    <p><strong>Achado no tratamento:</strong> <strong>274 dos 12.416 XMLs (2,2%) trazem vagas sem o
+    atributo de ocupação.</strong> São dias inteiros anotados pela metade. O sistema descarta essas
+    fotos em vez de adivinhar o rótulo: incluí-las com um chute inflaria ou afundaria qualquer
+    métrica sem que ninguém percebesse.</p>
+  </div>
+
+  <p>A esse conjunto se soma a <strong>captura própria</strong>, cerca de 300 fotos de um
+  estacionamento de Bauru, tiradas de ponto alto e fixo em três horários. Ela ainda não foi feita
+  (está no cronograma para outubro) e é a base que responde à pergunta que de fato interessa, porque
+  é uma câmera, uma perspectiva e uma pintura de solo que o modelo nunca viu. Enquanto ela não
+  existe, o papel de "câmera nunca vista" é da UFPR05, como explica a divisão abaixo.</p>
+
+  <h3>6.3 Tratamento dos dados</h3>
+  <h4>Divisão treino, validação e teste</h4>
+  <p>Este é o ponto onde o projeto poderia se enganar sozinho, e por isso ele vem antes do aumento
+  de dados. Fotos tiradas de cinco em cinco minutos da mesma câmera no mesmo dia são quase
+  idênticas. Com divisão aleatória, o quadro das 10h05 cai no treino e o das 10h10 no teste, o
+  modelo acerta quase tudo e o número não descreve nada. A divisão é <strong>por câmera e por
+  dia</strong>:</p>
+
+  <figure>
+    <svg viewBox="0 0 700 168" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, Arial, sans-serif">
+      <g font-size="9.5">
+        <rect x="8" y="26" width="200" height="96" rx="4" fill="#eef7f0" stroke="#2e6f3e" stroke-width="1.2"/>
+        <text x="108" y="18" text-anchor="middle" font-size="9" font-weight="600" fill="#2e6f3e">TREINO</text>
+        <text x="108" y="50" text-anchor="middle" font-weight="600">PUCPR + UFPR04</text>
+        <text x="108" y="70" text-anchor="middle" font-size="9" fill="#4a5b6b">dias pares do mes</text>
+        <text x="108" y="88" text-anchor="middle" font-size="9" fill="#4a5b6b">sol, nublado e chuva</text>
+        <text x="108" y="108" text-anchor="middle" font-size="9" fill="#4a5b6b">971 imagens exportadas</text>
+
+        <rect x="222" y="26" width="200" height="96" rx="4" fill="#fdf6ec" stroke="#b07d2b" stroke-width="1.2"/>
+        <text x="322" y="18" text-anchor="middle" font-size="9" font-weight="600" fill="#b07d2b">VALIDACAO</text>
+        <text x="322" y="50" text-anchor="middle" font-weight="600">mesmas cameras</text>
+        <text x="322" y="70" text-anchor="middle" font-size="9" fill="#4a5b6b">dias impares, nunca vistos</text>
+        <text x="322" y="88" text-anchor="middle" font-size="9" fill="#4a5b6b">calibra o limiar e a curva</text>
+        <text x="322" y="108" text-anchor="middle" font-size="9" fill="#4a5b6b">278 imagens, 17.108 vagas</text>
+
+        <rect x="436" y="26" width="256" height="96" rx="4" fill="#fbf0ee" stroke="#a33227" stroke-width="1.2"/>
+        <text x="564" y="18" text-anchor="middle" font-size="9" font-weight="600" fill="#a33227">TESTE (so no fim)</text>
+        <text x="564" y="50" text-anchor="middle" font-weight="600">UFPR05 inteira</text>
+        <text x="564" y="70" text-anchor="middle" font-size="9" fill="#4a5b6b">camera e angulo nunca vistos</text>
+        <text x="564" y="88" text-anchor="middle" font-size="9" fill="#4a5b6b">mede generalizacao de verdade</text>
+        <text x="564" y="108" text-anchor="middle" font-size="9" fill="#4a5b6b">401 imagens exportadas</text>
+
+        <text x="350" y="148" text-anchor="middle" font-size="9" fill="#6b7a88">
+          Nenhuma foto do mesmo dia e da mesma camera aparece em dois conjuntos diferentes.
+        </text>
+      </g>
+    </svg>
+    <figcaption><strong>Figura 2.</strong> Divisão da base, implementada em
+    <span class="mono">treino/divisao.py</span>. Separar por câmera e por dia derruba o número no
+    papel e é a única forma de ele querer dizer alguma coisa.</figcaption>
+  </figure>
+
+  <h4>Redimensionamento e normalização</h4>
+  <p>As imagens são 1280 por 720. Vão para o modelo a 1280 pixels com letterbox, preservando
+  proporção, e os pixels normalizados para o intervalo de 0 a 1. O mesmo caminho vale no treino e na
+  inferência, sem exceção: divergência entre os dois é a fonte clássica de modelo que vai bem na
+  validação e mal na tela. <strong>A resolução aqui não é detalhe</strong>: num teste inicial, a
+  mesma amostra de UFPR04 saiu com 80,2% de acerto a 640 pixels e 99,4% a 1280, porque a 640 o carro
+  encolhe abaixo do que o detector consegue enxergar.</p>
+
+  <h4>Aumento de dados</h4>
+  <p>O PKLot já traz sol, nuvem e chuva, então o aumento não precisa inventar clima, e sim cobrir o
+  que falta:</p>
+  <table>
+    <thead><tr><th style="width:28%">Transformação</th><th style="width:16%">Faixa</th><th>Motivo</th></tr></thead>
+    <tbody>
+      <tr><td>Mosaico</td><td>sempre</td><td>Padrão do treinador. Ajuda em objeto pequeno, que é exatamente o caso da vaga distante.</td></tr>
+      <tr><td>Espelhamento horizontal</td><td>50%</td><td>Dobra a variação de perspectiva sem custo. Vertical não entra: não existe pátio de cabeça para baixo.</td></tr>
+      <tr><td>Rotação</td><td>&plusmn;5°</td><td>Compensa tripé torto. Mais que isso é irreal para câmera parafusada em parede.</td></tr>
+      <tr><td>Matiz</td><td>&plusmn;1,5%</td><td>Balanço de branco varia entre modelos de câmera.</td></tr>
+      <tr><td>Saturação e brilho</td><td>&plusmn;40%</td><td>Câmera diferente expõe diferente, e a webcam do grupo não permite travar exposição.</td></tr>
+    </tbody>
+  </table>
+  <p>O aumento incide <strong>apenas no treino</strong>. Validação e teste ficam intocados, senão a
+  medição deixa de descrever o mundo.</p>
+
+  <h3>6.4 Privacidade</h3>
+  <p>Imagem de pátio pode conter placa e, eventualmente, rosto de quem passa. Placa identifica
+  pessoa por caminho indireto, então o projeto adota três regras desde o primeiro dia, e não como
+  remendo no fim: a captura própria será feita de ângulo alto, onde a placa fica ilegível; imagens
+  publicadas no repositório passam por borramento de placa; e o sistema em operação <strong>não
+  grava quadro nenhum em disco</strong>, apenas a linha de estado da vaga no banco. O vídeo anotado
+  só existe quando alguém pede explicitamente, com <span class="mono">--gravar</span>.</p>
+</section>
+
+<section>
+  <h2>7. Modelo de visão computacional</h2>
+
+  <h3>7.1 Tipo de problema</h3>
+  <p><strong>Detecção de objetos.</strong> O modelo localiza objetos no quadro e os rotula, e a
+  posição importa: o painel precisa dizer <em>onde</em> está a vaga livre, não apenas quantas
+  existem. Há classificação embutida, mas o problema não é de classificação pura.</p>
+  <p>O projeto testa duas formas de chegar à resposta, e a diferença entre elas é qual pergunta se
+  faz à imagem.</p>
+  <table>
+    <thead><tr><th style="width:20%">Critério</th><th style="width:40%">Detector de veículos (sem treino)</th><th>Detector de vagas (treinado)</th></tr></thead>
+    <tbody>
+      <tr><td>Pergunta que faz</td><td>"Onde estão os carros?" Depois cruza com o mapa de vagas.</td><td>"Onde estão as vagas, e quais estão ocupadas?"</td></tr>
+      <tr><td>Pesos</td><td>YOLO11n do COCO, prontos.</td><td>YOLO11n ajustado no PKLot, 2 classes.</td></tr>
+      <tr><td>Custo para começar</td><td>Zero. Funciona em qualquer pátio no mesmo dia.</td><td>Um treino, e uma base anotada para treinar.</td></tr>
+      <tr><td>Vaga vazia</td><td>Conclui "livre" por ausência de detecção.</td><td>Afirma "livre" porque viu a vaga vazia.</td></tr>
+      <tr><td>Câmera nova</td><td>Só precisa do mapa de vagas.</td><td>Depende de quanto a nova câmera se parece com as do treino.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>7.2 Da caixa para a vaga: a regra de decisão</h3>
+  <p>O detector devolve caixas alinhadas aos eixos; a vaga do PKLot é um quadrilátero girado. Para
+  cruzar os dois, o sistema recorta um contra o outro com o algoritmo de Sutherland-Hodgman (1974) e
+  mede a área exata da interseção. A decisão usa <strong>a fração da vaga coberta</strong>, e não a
+  IoU, por um motivo concreto: um caminhão que transborda a vaga continua ocupando a vaga, e a IoU
+  desaba justamente nesse caso, porque a união fica enorme. No teste automatizado, um veículo três
+  vezes maior que a vaga dá cobertura 1,00 e IoU abaixo de 0,05.</p>
+
+  <h3>7.3 Calibração do limiar</h3>
+  <p>Quanto da vaga precisa estar coberta para chamá-la de ocupada? O valor foi escolhido varrendo o
+  conjunto de validação, com a cobertura de cada vaga calculada uma vez e os limiares aplicados
+  depois sobre o que já estava medido. Foram <strong>6.886 vagas</strong> de 120 fotos.</p>
+  <table>
+    <thead><tr><th class="c">Limiar</th><th class="c">0,10</th><th class="c">0,20</th><th class="c">0,30</th><th class="c">0,40</th><th class="c">0,50</th><th class="c">0,60</th><th class="c">0,70</th><th class="c">0,80</th></tr></thead>
+    <tbody>
+      <tr><td>Acurácia</td><td class="c">71,7%</td><td class="c">72,7%</td><td class="c">73,1%</td><td class="c">73,3%</td><td class="c">73,3%</td><td class="c">73,0%</td><td class="c">71,6%</td><td class="c">65,9%</td></tr>
+      <tr><td>Falso ocupado</td><td class="c">4,6%</td><td class="c">1,7%</td><td class="c">0,7%</td><td class="c">0,3%</td><td class="c">0,1%</td><td class="c">0,1%</td><td class="c">0,0%</td><td class="c">0,0%</td></tr>
+      <tr><td>Falso livre</td><td class="c ruim">54,1%</td><td class="c ruim">55,0%</td><td class="c ruim">55,3%</td><td class="c ruim">55,3%</td><td class="c ruim">55,4%</td><td class="c ruim">56,1%</td><td class="c ruim">59,2%</td><td class="c ruim">70,9%</td></tr>
+    </tbody>
+  </table>
+  <p class="tab-legenda">Tabela 5. Varredura do limiar de cobertura na validação, com o detector de
+  veículos sem treino. A curva é chata entre 0,30 e 0,50; adotamos 0,30.</p>
+  <p>A conclusão que interessa não é qual limiar venceu, e sim que <strong>nenhum limiar resolve o
+  problema</strong>. O falso livre fica acima de 54% em toda a faixa, e mexer no limiar apenas troca
+  um erro pelo outro. Quando a calibração de um parâmetro não muda a ordem de grandeza do erro, o
+  parâmetro não é a causa. A causa estava em outro lugar, e a seção seguinte mostra onde.</p>
+
+  <h3>7.4 Onde o caminho fácil quebra</h3>
+  <p>Separando o mesmo experimento por estacionamento, o número médio se desfaz em dois números que
+  não têm nada a ver um com o outro:</p>
+  <table>
+    <thead><tr><th style="width:22%">Estacionamento</th><th class="c">Vagas por foto</th><th class="c">Acurácia</th><th class="c">Falso livre</th><th class="c">Falso ocupado</th></tr></thead>
+    <tbody>
+      <tr><td>UFPR04 (câmera próxima)</td><td class="c">28</td><td class="c bom">98,2%</td><td class="c bom">2,2%</td><td class="c">1,3%</td></tr>
+      <tr><td>PUCPR (décimo andar)</td><td class="c">100</td><td class="c ruim">62,9%</td><td class="c ruim">80,7%</td><td class="c">0,5%</td></tr>
+    </tbody>
+  </table>
+  <p class="tab-legenda">Tabela 6. Detector de veículos sem treino, validação, limiar 0,30. O mesmo
+  sistema, no mesmo dia, com o mesmo código.</p>
+  <p>O motivo é de tamanho, não de dificuldade conceitual. Na PUCPR a câmera está no décimo andar e
+  um carro ocupa poucas dezenas de pixels; o detector treinado no COCO simplesmente não o vê, e vaga
+  sem detecção vira "livre" por ausência. É por isso que o erro se concentra todo no lado caro:
+  quatro em cada cinco vagas ocupadas são anunciadas como livres.</p>
+
+  <figure>
+    <img src="figuras/pucpr_coco.jpg" alt="Quadro da PUCPR anotado pelo detector sem treino">
+    <figcaption><strong>Figura 3.</strong> PUCPR, meio-dia, detector de veículos sem treino: 84 de
+    100 vagas certas, com 14 vagas ocupadas pintadas de verde. As fileiras do fundo, onde o carro é
+    menor no quadro, concentram o erro. Nenhum número teria mostrado isso tão rápido quanto olhar o
+    quadro.</figcaption>
+  </figure>
+
+  <h4>Primeira tentativa de conserto: janelas deslizantes</h4>
+  <p>Se o problema é tamanho, uma saída barata é recortar o quadro em janelas com sobreposição e
+  rodar o detector em cada uma na resolução cheia, o que aumenta o carro em proporção. As janelas
+  vão em lote para a GPU, então o custo real fica abaixo do proporcional.</p>
+  <table>
+    <thead><tr><th style="width:26%">Grade de janelas</th><th class="c">Acurácia (PUCPR)</th><th class="c">Falso livre</th><th class="c">ms por quadro</th></tr></thead>
+    <tbody>
+      <tr><td>Quadro inteiro</td><td class="c">66,5%</td><td class="c ruim">78,6%</td><td class="c">173</td></tr>
+      <tr><td>2 x 2</td><td class="c">81,5%</td><td class="c">43,2%</td><td class="c">246</td></tr>
+      <tr><td>3 x 2</td><td class="c bom">84,8%</td><td class="c">35,3%</td><td class="c">349</td></tr>
+      <tr><td>4 x 3</td><td class="c">78,9%</td><td class="c">49,1%</td><td class="c">535</td></tr>
+    </tbody>
+  </table>
+  <p class="tab-legenda">Tabela 7. Efeito das janelas deslizantes na câmera distante.</p>
+  <p>O ganho é grande e insuficiente. Dezoito pontos de acurácia por recortar a imagem confirmam o
+  diagnóstico, e a grade 4x3 piorando em relação à 3x2 mostra o limite do truque: janela pequena
+  demais corta carros na borda e multiplica detecção repetida, que a supressão de sobreposição
+  precisa desfazer. Mesmo na melhor grade, um terço das vagas ocupadas ainda é anunciado como livre,
+  o que é inaceitável para quem vai dirigir até lá.</p>
+
+  <h3>7.5 Treino do detector de vagas</h3>
+  <p>Se o detector geral não sabe o que é um carro de vinte pixels visto do décimo andar, a saída é
+  ensinar. Partimos dos pesos do COCO e ajustamos o <span class="mono">yolo11n</span> para duas
+  classes, <span class="mono">vaga-livre</span> e <span class="mono">vaga-ocupada</span>, usando
+  971 imagens de treino e 278 de validação, todas da divisão por câmera e por dia da seção 6.3.</p>
+  <table>
+    <thead><tr><th style="width:26%">Parâmetro</th><th style="width:22%">Valor</th><th>Por quê</th></tr></thead>
+    <tbody>
+      <tr><td>Resolução</td><td>1280 x 1280</td><td>Resolução nativa da base. A 640 a vaga distante desaparece.</td></tr>
+      <tr><td>Lote</td><td>4</td><td>Limite da VRAM de 4 GB, não da teoria.</td></tr>
+      <tr><td>Épocas</td><td>30</td><td>Cerca de 9 minutos cada, 4 h 15 no total.</td></tr>
+      <tr><td>Aumento</td><td>mosaico, espelhamento, ±5°, HSV</td><td>Câmera parafusada não gira; rotação grande ensinaria o que nunca aparece.</td></tr>
+      <tr><td>Semente</td><td>42, fixa</td><td>Para o experimento poder ser repetido.</td></tr>
+    </tbody>
+  </table>
+  <p>Na validação o resultado é forte e rápido de descrever: <strong>mAP@0,5 de 0,989 e mAP@0,5:0,95
+  de 0,852</strong>, com precisão de 0,966 e revocação de 0,995 sobre 17.108 vagas. A curva subiu de
+  0,953 já na primeira época e o ganho das vinte épocas finais foi quase todo em mAP@0,5:0,95, ou
+  seja, em encaixe da caixa, não em achar a vaga.</p>
+
+  <h3>7.6 A comparação, e a surpresa</h3>
+  <p>Com os três caminhos prontos, a comparação é direta. Duas colunas de acurácia aparecem de
+  propósito: a primeira ignora a vaga que o modelo não conseguiu ler, que é como a métrica costuma
+  ser publicada, e a segunda conta a vaga não lida como erro, que é o que o motorista sente quando
+  o painel não sabe responder.</p>
+  <table>
+    <thead>
+      <tr><th style="width:27%">Configuração</th>
+      <th class="c">Acurácia (lidas)</th><th class="c">Acurácia (todas)</th>
+      <th class="c">Falso livre</th><th class="c">Sem leitura</th><th class="c">ms/quadro</th></tr>
+    </thead>
+    <tbody>
+      <tr><td colspan="6" style="background:#e9eff5;font-weight:600">Validação &mdash; PUCPR e UFPR04, dias que o modelo nunca viu</td></tr>
+      <tr><td>Veículos, quadro inteiro</td><td class="c">70,2%</td><td class="c">70,2%</td><td class="c ruim">60,8%</td><td class="c">0,0%</td><td class="c">72</td></tr>
+      <tr><td>Veículos, janelas 3x2</td><td class="c">87,7%</td><td class="c">87,7%</td><td class="c">24,7%</td><td class="c">0,0%</td><td class="c">200</td></tr>
+      <tr><td>Vagas, treinado</td><td class="c bom">100,0%</td><td class="c bom">100,0%</td><td class="c bom">0,1%</td><td class="c">0,0%</td><td class="c">26</td></tr>
+      <tr><td colspan="6" style="background:#e9eff5;font-weight:600">Teste &mdash; UFPR05, uma câmera que nenhum modelo viu</td></tr>
+      <tr><td>Veículos, quadro inteiro</td><td class="c">98,1%</td><td class="c bom">98,1%</td><td class="c">2,9%</td><td class="c">0,0%</td><td class="c">27</td></tr>
+      <tr><td>Veículos, janelas 3x2</td><td class="c">99,2%</td><td class="c bom">99,2%</td><td class="c bom">0,9%</td><td class="c">0,0%</td><td class="c">202</td></tr>
+      <tr><td>Vagas, treinado</td><td class="c">99,5%</td><td class="c ruim">25,6%</td><td class="c">0,0%</td><td class="c ruim">74,3%</td><td class="c">25</td></tr>
+    </tbody>
+  </table>
+  <p class="tab-legenda">Tabela 9. Sessenta fotos por conjunto, entrada de 1280 px, medido por
+  <span class="mono">treino/relatorio.py</span>.</p>
+
+  <p><strong>O modelo treinado ganha de longe na câmera que viu e desaba na câmera que não viu.</strong>
+  Na validação ele vai de 70,2% para 100,0% e reduz o falso livre de 60,8% para 0,1%. No teste, a
+  mesma linha mostra 99,5% se olharmos só as vagas que ele leu, e <strong>25,6% quando a vaga não
+  lida conta como erro</strong>: ele deixou de ler 74,3% das vagas da UFPR05.</p>
+  <p>Diagnosticando em oito fotos de cada lado, o quadro fica nítido. Nas câmeras do treino o modelo
+  devolve 589 detecções para 583 vagas, com IoU mediana de 0,746 contra o contorno verdadeiro. Na
+  UFPR05 devolve 112 detecções para 319 vagas, IoU mediana de 0,052, e 101 vagas sem nenhuma
+  sobreposição. Ele não aprendeu a reconhecer vaga: aprendeu a geometria daqueles dois pátios.</p>
+
+  <figure>
+    <div style="display:flex;gap:6pt">
+      <div style="flex:1"><img src="figuras/pucpr_treinado.jpg" alt="PUCPR com o modelo treinado"></div>
+      <div style="flex:1"><img src="figuras/ufpr05_treinado.jpg" alt="UFPR05 com o modelo treinado"></div>
+    </div>
+    <figcaption><strong>Figura 4.</strong> O mesmo modelo treinado. À esquerda, PUCPR, uma das
+    câmeras do treino: 100 de 100 vagas certas. À direita, UFPR05, câmera nunca vista: 33 das 40
+    vagas ficam em laranja, sem leitura. O sistema se recusa a chutar "livre" onde não enxergou
+    nada, e é por isso que o erro aparece como silêncio e não como mentira.</figcaption>
+  </figure>
+
+  <div class="nota">
+    <p><strong>A conclusão de engenharia inverteu o palpite inicial.</strong> O modelo treinado não
+    substitui o detector geral: os dois resolvem problemas diferentes. O detector de veículos é
+    agnóstico à câmera e serve para apontar em qualquer pátio no primeiro dia; o treinado é imbatível
+    onde foi treinado e imprestável fora. Por isso o Baliza mantém os dois, escolhidos por uma opção
+    de linha de comando, e o padrão é o genérico. É também por isso que a captura própria de Bauru,
+    no cronograma de outubro, deixou de ser um detalhe de validação e passou a ser a condição para
+    usar o modelo treinado em qualquer pátio novo.</p>
+  </div>
+</section>
+
+<section>
+  <h2>8. Infraestrutura necessária</h2>
+  <p>Tudo o que a tabela abaixo marca como disponível foi usado de verdade nesta etapa. O projeto
+  não depende de nenhuma compra.</p>
+
+  <table>
+    <thead><tr><th style="width:16%">Item</th><th style="width:40%">Descrição</th><th class="c" style="width:11%">Disponível?</th><th>Uso no projeto</th></tr></thead>
+    <tbody>
+      <tr><td>Computador</td><td>Desktop Ryzen 3 3200G, 16 GB DDR4, SSD 480 GB e HD de 1 TB</td><td class="c">Sim</td><td>Treino, inferência e desenvolvimento</td></tr>
+      <tr><td>GPU</td><td>NVIDIA GeForce GTX 1650, 4 GB GDDR6, driver 610.88, CUDA 12.8</td><td class="c">Sim</td><td>Treino do YOLO11n e inferência em tempo real</td></tr>
+      <tr><td>Webcam</td><td>Webcam USB comum, sem controle de exposição nem de balanço de branco</td><td class="c">Sim</td><td>Demonstração ao vivo em sala</td></tr>
+      <tr><td>Câmera</td><td>Câmera de celular em apoio fixo, para a captura em Bauru</td><td class="c">Sim</td><td>Base própria de teste, em outubro</td></tr>
+      <tr><td>Armazenamento</td><td>4,9 GB do pacote compactado e 3,9 GB das fotos extraídas</td><td class="c">Sim</td><td>Base PKLot completa em disco</td></tr>
+      <tr><td>Raspberry Pi</td><td>Não previsto nesta etapa</td><td class="c">Não</td><td>Trabalho futuro, com o modelo exportável em ONNX</td></tr>
+      <tr><td>Arduino</td><td>Não se aplica</td><td class="c">Não</td><td>O projeto não tem atuador nem sensor físico</td></tr>
+      <tr><td>Impressora 3D</td><td>Não necessária</td><td class="c">Não</td><td>Apoio de câmera resolvido com tripé</td></tr>
+      <tr><td>Serviços em nuvem</td><td>Google Colab (GPU T4 gratuita) e GitHub</td><td class="c">Sim</td><td>Plano B de treino, que não foi preciso usar, e versionamento</td></tr>
+      <tr><td>Câmera IP fixa</td><td>Câmera de segurança com RTSP em estacionamento de terceiro</td><td class="c">Não</td><td>Ver observação abaixo</td></tr>
+    </tbody>
+  </table>
+
+  <h3>8.1 O que falta e como será obtido</h3>
+  <p>O único item ausente que importa é a <strong>câmera IP fixa em um estacionamento real</strong>,
+  e ela não bloqueia nada: a base pública cobre o treino e a captura própria cobrirá o teste. Se
+  sair autorização para apontar uma câmera para o estacionamento do campus por alguns dias, o
+  sistema ganha uma demonstração ao vivo; se não sair, a demonstração usa vídeo gravado do mesmo
+  pátio, que é como boa parte do trabalho publicado na área é avaliada. A solicitação será feita na
+  primeira semana de outubro, cedo o bastante para que uma recusa não atrapalhe o cronograma.</p>
+
+  <h3>8.2 Custo computacional medido</h3>
+  <table>
+    <thead><tr><th style="width:40%">Tarefa</th><th style="width:22%">Onde</th><th>Tempo</th></tr></thead>
+    <tbody>
+      <tr><td>Download da base (4,9 GB)</td><td>Rede local</td><td>cerca de 2 minutos</td></tr>
+      <tr><td>Calibração do limiar (120 fotos, 6.886 vagas)</td><td>GTX 1650</td><td>3 minutos</td></tr>
+      <tr><td>Treino do detector de vagas</td><td>GTX 1650</td><td>cerca de 9 minutos por época</td></tr>
+      <tr><td>Inferência, quadro de 1280 px</td><td>GTX 1650</td><td>47 a 100 ms, ou seja 10 a 21 quadros por segundo</td></tr>
+      <tr><td>Inferência com janelas 3x2</td><td>GTX 1650</td><td>cerca de 350 ms por quadro</td></tr>
+      <tr><td>Suíte de testes (107 testes)</td><td>CPU</td><td>menos de 1 minuto</td></tr>
+    </tbody>
+  </table>
+  <p class="tab-legenda">Tabela 8. Custo em dinheiro: zero. Todo o software é livre ou tem plano
+  gratuito suficiente, e o hardware já estava em casa.</p>
+  <p>Vale registrar um limite real da máquina: com lote de 4 imagens a 1280 pixels, o treino ocupa
+  praticamente toda a VRAM de 4 GB e transborda para a memória do sistema. O script de treino cai
+  de lote sozinho quando a memória estoura, em vez de morrer no meio da noite. E a GTX 1650 não tem
+  núcleos tensores, então a precisão mista ajuda menos do que ajudaria numa placa mais nova: é por
+  isso que a época leva nove minutos e não dois.</p>
+</section>
+
+<section>
+  <h2>9. Cronograma</h2>
+  <p>De setembro a dezembro de 2026. A ordem foi montada para que o maior risco, o modelo não
+  generalizar para outra câmera, aparecesse cedo. Ele apareceu: está medido na seção 7 e já mudou o
+  desenho do sistema.</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="width:36%">Atividade</th>
+        <th class="c">Set</th><th class="c">Out</th><th class="c">Nov</th><th class="c">Dez</th>
+        <th style="width:24%">Situação</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Pesquisa, escopo e proposta (P1)</td><td class="c x">X</td><td class="c"></td><td class="c"></td><td class="c"></td><td>Concluído</td></tr>
+      <tr><td>Base: download, conversão e divisão por câmera</td><td class="c x">X</td><td class="c"></td><td class="c"></td><td class="c"></td><td>Concluído</td></tr>
+      <tr><td>Núcleo do sistema, com testes</td><td class="c x">X</td><td class="c"></td><td class="c"></td><td class="c"></td><td>Concluído, 107 testes</td></tr>
+      <tr><td>Detector sem treino e calibração do limiar</td><td class="c x">X</td><td class="c"></td><td class="c"></td><td class="c"></td><td>Concluído e medido</td></tr>
+      <tr><td>Treino do detector de vagas no PKLot</td><td class="c x">X</td><td class="c x">X</td><td class="c"></td><td class="c"></td><td>Primeira rodada feita</td></tr>
+      <tr><td>Painel web e histórico</td><td class="c x">X</td><td class="c x">X</td><td class="c"></td><td class="c"></td><td>Funcionando, falta refinar</td></tr>
+      <tr><td>Captura própria em Bauru e anotação</td><td class="c"></td><td class="c x">X</td><td class="c"></td><td class="c"></td><td>A fazer</td></tr>
+      <tr><td>Retreino incluindo a captura própria</td><td class="c"></td><td class="c"></td><td class="c x">X</td><td class="c"></td><td>A fazer</td></tr>
+      <tr><td>Comparação com YOLO26n</td><td class="c"></td><td class="c"></td><td class="c x">X</td><td class="c"></td><td>A fazer</td></tr>
+      <tr><td>Avaliação final e inspeção visual dos quadros</td><td class="c"></td><td class="c"></td><td class="c x">X</td><td class="c x">X</td><td>Parcial</td></tr>
+      <tr><td>Documentação, slides e ensaio da demonstração</td><td class="c"></td><td class="c"></td><td class="c"></td><td class="c x">X</td><td>A fazer</td></tr>
+    </tbody>
+  </table>
+
+  <h3>9.1 Marcos</h3>
+  <p>O marco de setembro era ter o sistema rodando ponta a ponta sobre a base pública, com métrica
+  nos três conjuntos e pacote de demonstração montado, e foi atingido. O de outubro é a captura de
+  Bauru anotada e medida sem retreino, para conhecer o tamanho da queda em um pátio de verdade. O de
+  novembro é o retreino com essas imagens e a comparação com o YOLO26n. Na entrega final tem que
+  haver relatório, repositório organizado e demonstração ensaiada, funcionando sem internet.</p>
+</section>
+
+<section>
+  <h2>10. Divisão de responsabilidades</h2>
+  <p>A divisão segue o que cada um já fez em disciplinas anteriores, mas ninguém fica em uma caixa:
+  a revisão de código é cruzada e todo integrante precisa conseguir rodar o sistema inteiro na
+  própria máquina antes da entrega final. Isso é exigência, não formalidade, porque a demonstração
+  acontece em um computador só.</p>
+  <table>
+    <thead><tr><th style="width:25%">Integrante</th><th style="width:28%">Responsabilidade principal</th><th>Detalhe</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>Fabrício Júnio Almeida Dias</td>
+        <td>Arquitetura e núcleo de visão</td>
+        <td>Estrutura do repositório, geometria da vaga, detectores, regra de ocupação, suavização temporal, linha de comando e empacotamento.</td>
+      </tr>
+      <tr>
+        <td>Camila Pereira Raimundo</td>
+        <td>Base de dados e anotação</td>
+        <td>Leitura do PKLot, divisão por câmera e dia, captura em Bauru, anotação e política de aumento de dados.</td>
+      </tr>
+      <tr>
+        <td>Luan Miranda Padilha</td>
+        <td>Treino e avaliação</td>
+        <td>Exportação para o formato YOLO, execução dos treinos, calibração do limiar, métricas, matriz de confusão e comparação entre os modelos.</td>
+      </tr>
+      <tr>
+        <td>Kauã Limão Nunes</td>
+        <td>Interface, persistência e documentação</td>
+        <td>Painel Streamlit, banco SQLite, exportação em CSV, pacote de demonstração, README, relatório e slides.</td>
+      </tr>
+    </tbody>
+  </table>
+  <p>Combinados de trabalho: cada mudança entra por pull request com pelo menos um revisor; os
+  testes rodam antes de cada entrega; e há um alinhamento curto por semana sobre o que travou.</p>
+</section>
+
+<section>
+  <h2>11. Resultados esperados</h2>
+
+  <h3>11.1 O que o sistema já faz</h3>
+  <p>Recebe vídeo de câmera fixa, ao vivo ou gravado, imagem avulsa ou pasta de fotos, e mantém na
+  tela o pátio com cada vaga contornada em verde, vermelho ou laranja, o número de vagas livres por
+  setor e a curva de ocupação da sequência, com o histórico gravado em banco local e exportável em
+  CSV. O pacote de demonstração que acompanha o repositório traz três pátios, com o dia inteiro de
+  cada um montado em vídeo a partir das fotos de cinco em cinco minutos, mais os mapas de vagas e os
+  vídeos já anotados.</p>
+
+  <figure>
+    <img src="figuras/painel_rodando.png" alt="Painel do Baliza processando o pátio da PUCPR"
+         style="width:58%;margin:0 auto">
+    <figcaption><strong>Figura 5.</strong> Painel processando a PUCPR com o detector treinado: 95
+    vagas ocupadas de 100, contagem por setor e a curva subindo ao longo da manhã.</figcaption>
+  </figure>
+
+  <h3>11.2 Métricas, metas e o que foi atingido</h3>
+  <table>
+    <thead><tr><th style="width:34%">Métrica</th><th class="c" style="width:12%">Meta</th><th class="c" style="width:16%">Atingido</th><th>Observação</th></tr></thead>
+    <tbody>
+      <tr><td>mAP@0,5, validação</td><td class="c">&ge; 0,90</td><td class="c bom">0,989</td><td>Detector treinado, 17.108 vagas</td></tr>
+      <tr><td>mAP@0,5:0,95, validação</td><td class="c">&ge; 0,65</td><td class="c bom">0,852</td><td>Encaixe da caixa, métrica severa</td></tr>
+      <tr><td>Acurácia por vaga, câmera do treino</td><td class="c">&ge; 95%</td><td class="c bom">100,0%</td><td>Detector treinado</td></tr>
+      <tr><td>Acurácia por vaga, câmera nunca vista</td><td class="c">&ge; 85%</td><td class="c bom">98,1%</td><td>Detector de veículos, sem treino</td></tr>
+      <tr><td>Mesma métrica, detector treinado</td><td class="c">&ge; 85%</td><td class="c ruim">25,6%</td><td>Não generaliza; ver seção 7.6</td></tr>
+      <tr><td>Falso livre, câmera nunca vista</td><td class="c">&le; 3%</td><td class="c bom">0,9%</td><td>Detector de veículos com janelas 3x2</td></tr>
+      <tr><td>Velocidade, GPU</td><td class="c">&ge; 15 q/s</td><td class="c bom">37 a 40 q/s</td><td>25 a 27 ms por quadro, quadro inteiro</td></tr>
+      <tr><td>Cobertura de testes</td><td class="c">&ge; 80%</td><td class="c bom">82%</td><td>110 testes, sem contar os que carregam o modelo</td></tr>
+    </tbody>
+  </table>
+  <p>Das oito metas, sete foram atingidas e uma falhou, e a que falhou é a mais informativa do
+  projeto. Vale registrar também que o detector de veículos <strong>não atinge</strong> a meta de
+  85% na PUCPR, onde fica em 62,8%: a meta só é alcançada ali com o modelo treinado. Nenhum dos
+  dois caminhos, sozinho, cobre os dois casos.</p>
+  <p>Toda rodada de avaliação inclui a inspeção de quadros anotados, e não só a leitura da tabela:
+  foi olhando a Figura 3 que a origem do erro da PUCPR ficou evidente em segundos, enquanto a média
+  geral apenas dizia "73%".</p>
+
+  <h3>11.3 Impacto esperado e o que falta</h3>
+  <p>O resultado prático é a demonstração de que um pátio de porte médio pode ter monitoramento de
+  ocupação <strong>sem obra e sem sensor por vaga</strong>: a máquina usada processa cem vagas em 25
+  milissegundos, e para o campus a saída imediata seria saber a que horas o pátio satura e qual
+  setor satura primeiro.</p>
+  <p>Até a entrega final ficam três frentes: a captura própria em Bauru, que agora tem peso maior
+  porque é ela que dirá o tamanho da queda em um pátio de verdade; o retreino incluindo essas
+  imagens, para medir quanto de generalização se compra com algumas centenas de fotos da câmera
+  nova; e a comparação com o YOLO26n sob o mesmo protocolo.</p>
+
+  <h3>11.4 Riscos</h3>
+  <table>
+    <thead><tr><th style="width:32%">Risco</th><th class="c" style="width:12%">Chance</th><th>Plano</th></tr></thead>
+    <tbody>
+      <tr><td>Modelo treinado não generalizar</td><td class="c">Confirmado</td><td>Deixou de ser risco e virou resultado. O sistema mantém os dois detectores e usa o genérico por padrão.</td></tr>
+      <tr><td>Queda grande no pátio de Bauru</td><td class="c">Média</td><td>Medir sem retreino, depois com retreino, e relatar as duas situações.</td></tr>
+      <tr><td>Autorização de câmera não sair</td><td class="c">Média</td><td>Demonstração com vídeo gravado, que é como a avaliação da área costuma ser feita.</td></tr>
+      <tr><td>Oclusão em vaga distante</td><td class="c">Média</td><td>Marcar as vagas do fundo como de baixa confiança e relatar métrica separada por faixa de distância.</td></tr>
+      <tr><td>Integrante indisponível</td><td class="c">Baixa</td><td>Revisão cruzada e repositório único; ninguém é o único a saber rodar uma parte.</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section>
+  <h2>12. Referências</h2>
+
+  <p class="ref">ALMEIDA, P. R. L.; OLIVEIRA, L. S.; BRITTO JR., A. S.; SILVA JR., E. J.; KOERICH,
+  A. L. PKLot: a robust dataset for parking lot classification. <em>Expert Systems with
+  Applications</em>, v. 42, n. 11, p. 4937-4949, 2015. Base disponível em
+  <span class="mono">https://www.inf.ufpr.br/vri/databases/PKLot.tar.gz</span>, licença CC BY 4.0.</p>
+
+  <p class="ref">AMATO, G.; CARRARA, F.; FALCHI, F.; GENNARO, C.; MEGHINI, C.; VAIRO, C. Deep
+  learning for decentralized parking lot occupancy detection. <em>Expert Systems with
+  Applications</em>, v. 72, p. 327-334, 2017.</p>
+
+  <p class="ref">SHOUP, D. Cruising for parking. <em>Transport Policy</em>, v. 13, n. 6,
+  p. 479-486, 2006.</p>
+
+  <p class="ref">SHOUP, D. <em>The high cost of free parking</em>. Chicago: Planners Press, 2005.</p>
+
+  <p class="ref">ULTRALYTICS. <em>YOLO11 documentation</em>. Disponível em:
+  <span class="mono">https://docs.ultralytics.com/models/yolo11/</span>. Acesso em: 23 set. 2026.</p>
+
+  <p class="ref">ULTRALYTICS. <em>YOLO26: unified real-time end-to-end vision models</em>.
+  Disponível em: <span class="mono">https://docs.ultralytics.com/models/yolo26/</span>. Acesso em:
+  23 set. 2026.</p>
+
+  <p class="ref">SUTHERLAND, I. E.; HODGMAN, G. W. Reentrant polygon clipping.
+  <em>Communications of the ACM</em>, v. 17, n. 1, p. 32-42, 1974.</p>
+
+  <p class="ref">BRADSKI, G. The OpenCV library. <em>Dr. Dobb's Journal of Software Tools</em>,
+  2000. Documentação em <span class="mono">https://docs.opencv.org/4.x/</span>.</p>
+
+  <p class="ref">PASZKE, A. et al. PyTorch: an imperative style, high-performance deep learning
+  library. In: <em>Advances in Neural Information Processing Systems 32</em>, 2019.</p>
+
+  <p class="ref">BRASIL. <em>Lei nº 13.709, de 14 de agosto de 2018</em>. Lei Geral de Proteção de
+  Dados Pessoais (LGPD). Brasília, 2018.</p>
+
+  <p class="ref">STREAMLIT. <em>Documentation</em>. Disponível em:
+  <span class="mono">https://docs.streamlit.io/</span>. Acesso em: 23 set. 2026.</p>
+</section>
+
+</body>
+</html>

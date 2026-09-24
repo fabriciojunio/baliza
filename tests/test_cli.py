@@ -70,7 +70,7 @@ def test_argumentos_de_verdade_nao_sao_descartados(monkeypatch, tmp_path, mapa_d
         ["baliza", "rodar", str(tmp_path / "nao_existe.mp4"), "--mapa", str(caminho),
          "--pesos", "modelos/yolo11n.pt"],
     )
-    # Se os argumentos fossem descartados, cairia na demonstracao e devolveria 0.
+    # Se os argumentos fossem descartados, cairia na demonstração e devolveria 0.
     assert cli.main() == 2
 
 

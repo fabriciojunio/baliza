@@ -119,8 +119,8 @@ teste é a UFPR05 inteira, uma câmera que o modelo nunca viu.
 ## Testes
 
 ```
-pytest                      # a suite inteira, 110 testes
-pytest -m "not lento"       # pula o que carrega o modelo de verdade
+pytest                      # a suíte inteira, 111 testes
+pytest -m "not lento"       # pula o único que carrega o modelo de verdade
 pytest --cov                # com cobertura
 ```
 

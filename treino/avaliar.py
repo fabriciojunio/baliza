@@ -71,7 +71,7 @@ def avaliar(
             mapa = pklot.mapa_de_anotacao(foto.anotacao, foto.estacionamento)
         except pklot.AnotacaoInvalida:
             # 274 dos 12.416 XMLs da base trazem vaga sem o atributo occupied.
-            # Adivinhar o rotulo contaminaria a medicao, entao a foto sai.
+            # Adivinhar o rótulo contaminaria a medição, então a foto sai.
             descartadas += 1
             continue
         verdadeiro = pklot.verdade(foto.anotacao)
@@ -138,10 +138,10 @@ def metricas(m: dict[str, int]) -> dict:
     return {
         "vagas_avaliadas": total,
         "matriz": dict(m),
-        # Duas acuracias de proposito. A primeira ignora a vaga que o modelo
-        # nao leu, e e a que costuma aparecer em artigo; a segunda conta a vaga
-        # nao lida como erro, que e o que o motorista sente quando o painel nao
-        # sabe responder. Quando as duas se afastam, a diferenca e a noticia.
+        # Duas acurácias de propósito. A primeira ignora a vaga que o modelo
+        # não leu, e e a que costuma aparecer em artigo; a segunda conta a vaga
+        # não lida como erro, que e o que o motorista sente quando o painel não
+        # sabe responder. Quando as duas se afastam, a diferença e a noticia.
         "acuracia": taxa(acertos, decididas),
         "acuracia_sobre_todas": taxa(acertos, total),
         "falso_livre": taxa(m["vo_pl"], ocupadas_reais),

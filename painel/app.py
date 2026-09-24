@@ -65,9 +65,9 @@ def curva(banco: Path, camera: str) -> None:
         return
     tabela = pd.DataFrame(serie, columns=["instante", "ocupadas", "total"])
     tabela["ocupacao (%)"] = (tabela["ocupadas"] / tabela["total"] * 100).round(1)
-    # O eixo e a ordem da leitura, e nao o relogio: processar um video de
-    # arquivo leva um minuto, e carimbar o grafico com a hora do processamento
-    # daria a entender que o patio encheu em um minuto. O carimbo real fica no
+    # O eixo e a ordem da leitura, e não o relógio: processar um vídeo de
+    # arquivo leva um minuto, e carimbar o gráfico com a hora do processamento
+    # daria a entender que o pátio encheu em um minuto. O carimbo real fica no
     # CSV, que e onde ele serve para alguma coisa.
     tabela.insert(0, "leitura", range(1, len(tabela) + 1))
     st.subheader("Ocupação ao longo da sequência")

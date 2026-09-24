@@ -107,8 +107,8 @@ def _placar(quadro, mapa: Mapa, resultado: Resultado) -> None:
     por_setor = resultado.por_setor(mapa.por_id)
     if len(por_setor) > 1:
         partes = " | ".join(f"{setor}: {l}/{t}" for setor, (l, t) in por_setor.items())
-        # A largura vem do proprio OpenCV: estimar por numero de caracteres
-        # corta o ultimo setor fora da tela quando ha tres ou mais.
+        # A largura vem do próprio OpenCV: estimar por número de caracteres
+        # corta o último setor fora da tela quando ha três ou mais.
         (largura_texto, _), _ = cv2.getTextSize(_sem_acento(partes), FONTE, 0.45, 1)
         _escrever(quadro, partes, (max(12, largura - 12 - largura_texto), 24), 0.45, BRANCO, 1)
 

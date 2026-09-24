@@ -3,7 +3,7 @@
     python treino/figuras.py --rotulo coco
     python treino/figuras.py --rotulo treinado --modo vagas --pesos modelos/vagas.pt
 
-Guarda em docs/figuras/<apelido>_<rotulo>.jpg e imprime o acerto daquele
+Guarda em docs/figuras/<apelido>_<rótulo>.jpg e imprime o acerto daquele
 quadro, que é o que vai na legenda da figura.
 """
 
@@ -35,8 +35,8 @@ ALVOS = {
 def escolher(raiz: str, estacionamento: str, clima: str):
     """Um quadro com o patio pela metade.
 
-    Patio vazio as seis da manha ou lotado ao meio-dia rende figura bonita e
-    sem informacao: qualquer sistema acerta tudo quando a resposta e sempre a
+    Pátio vazio as seis da manha ou lotado ao meio-dia rende figura bonita e
+    sem informação: qualquer sistema acerta tudo quando a resposta e sempre a
     mesma. O que interessa e o quadro em que livre e ocupada convivem.
     """
     fotos = pklot.listar_fotos(raiz, estacionamentos=(estacionamento,), climas=(clima,),

@@ -5,7 +5,7 @@ inteiro. Juntando as fotos de um dia em sequência sai um vídeo em que o
 estacionamento enche de manhã e esvazia à tarde, que é exatamente o que se
 quer mostrar funcionando.
 
-    python treino/montar_demo.py --parte videos     # so os videos crus
+    python treino/montar_demo.py --parte videos     # só os vídeos crus
     python treino/montar_demo.py --parte anotado --pesos runs/vagas/weights/best.pt
 """
 
@@ -34,7 +34,7 @@ DIAS = {
 
 
 def _variacao(fotos: list[pklot.Foto], amostras: int = 12) -> float:
-    """Diferenca entre a maior e a menor ocupacao do dia, de 0 a 1."""
+    """Diferenca entre a maior e a menor ocupação do dia, de 0 a 1."""
     passo = max(1, len(fotos) // amostras)
     taxas = []
     for foto in fotos[::passo]:
@@ -51,9 +51,9 @@ def _variacao(fotos: list[pklot.Foto], amostras: int = 12) -> float:
 def escolher_dia(raiz: str, estacionamento: str, clima: str) -> list[pklot.Foto]:
     """O dia em que o patio mais encheu e esvaziou.
 
-    A primeira versao escolhia o dia com mais fotos, e caiu num 23 de dezembro
+    A primeira versão escolhia o dia com mais fotos, e caiu num 23 de dezembro
     com o estacionamento vazio do comeco ao fim: 156 quadros em que nada
-    acontece. O que rende demonstracao e variacao de ocupacao, nao duracao.
+    acontece. O que rende demonstração e variação de ocupação, não duração.
     """
     fotos = pklot.listar_fotos(raiz, estacionamentos=(estacionamento,), climas=(clima,))
     por_dia: dict[str, list[pklot.Foto]] = {}
@@ -218,8 +218,8 @@ def main() -> int:
     anterior = {}
     if caminho.exists():
         anterior = json.loads(caminho.read_text(encoding="utf-8"))
-    # Mescla por dentro: rodar so a parte anotada nao pode apagar o que a
-    # parte de videos escreveu, nem uma variante de detector apagar a outra.
+    # Mescla por dentro: rodar so a parte anotada não pode apagar o que a
+    # parte de vídeos escreveu, nem uma variante de detector apagar a outra.
     for chave, valor in relatorio.items():
         if isinstance(valor, dict) and isinstance(anterior.get(chave), dict):
             anterior[chave].update(valor)

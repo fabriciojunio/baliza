@@ -34,7 +34,7 @@ def treinar(dados: str, pesos: str, epocas: int, tamanho: int, lote: int,
                 device=0,
                 workers=2,
                 amp=True,
-                # Caminho absoluto de proposito: o Ultralytics guarda um
+                # Caminho absoluto de propósito: o Ultralytics guarda um
                 # runs_dir global e sem isso a saida vai parar em outro projeto.
                 project=str(Path("runs").resolve()),
                 name=nome,

@@ -37,7 +37,7 @@
   ul, ol { margin: 0 0 6pt; padding-left: 16pt; }
   li { margin-bottom: 2pt; }
   code, .mono { font-family: Consolas, "Courier New", monospace; font-size: 8.4pt;
-                background: #f1f5f8; padding: 0 3px; border-radius: 2px; }
+                background: #f1f5f8; padding: 0 1px; border-radius: 2px; }
 
   .selo { font-size: 8pt; letter-spacing: 2px; text-transform: uppercase;
           color: #4a5b6b; margin-bottom: 8pt; }
@@ -51,8 +51,9 @@
   table { width: 100%; border-collapse: collapse; margin: 5pt 0 8pt; font-size: 8.8pt;
           page-break-inside: avoid; }
   th { background: #1f4160; color: #fff; text-align: left; padding: 4pt 6pt;
-       font-size: 8.6pt; font-weight: 600; }
-  td { padding: 3.5pt 6pt; border-bottom: 1px solid #ccd6de; vertical-align: top; }
+       font-size: 8.6pt; font-weight: 600; hyphens: none; }
+  td { padding: 3.5pt 6pt; border-bottom: 1px solid #ccd6de; vertical-align: top;
+       text-align: left; hyphens: none; }
   tbody tr:nth-child(even) td { background: #f5f8fa; }
   td.c, th.c { text-align: center; }
   .x { color: #1f4160; font-weight: 700; }
@@ -229,7 +230,7 @@
       </tr>
       <tr>
         <td><strong>pytest</strong></td>
-        <td>107 testes sobre geometria, decisão de ocupação, suavização, persistência, captura e linha de comando.</td>
+        <td>111 testes sobre geometria, decisão de ocupação, suavização, persistência, captura e linha de comando.</td>
         <td>Sem teste, regressão em código de visão passa despercebida: o programa continua rodando e só o número muda.</td>
       </tr>
       <tr>
@@ -279,19 +280,19 @@
         <rect x="454" y="30" width="126" height="360" fill="#f5f8fa" stroke="#dde5ea"/>
         <rect x="588" y="30" width="128" height="360" fill="#f5f8fa" stroke="#dde5ea"/>
         <text x="67" y="22" font-size="9.5" font-weight="600" fill="#1f4160">1. ENTRADA</text>
-        <text x="213" y="22" font-size="9.5" font-weight="600" fill="#1f4160">2. PRE-PROCESSO</text>
-        <text x="371" y="22" font-size="9.5" font-weight="600" fill="#1f4160">3. DETECCAO</text>
-        <text x="517" y="22" font-size="9.5" font-weight="600" fill="#1f4160">4. DECISAO</text>
-        <text x="652" y="22" font-size="9.5" font-weight="600" fill="#1f4160">5. SAIDA</text>
+        <text x="213" y="22" font-size="9.5" font-weight="600" fill="#1f4160">2. PRÉ-PROCESSO</text>
+        <text x="371" y="22" font-size="9.5" font-weight="600" fill="#1f4160">3. DETECÇÃO</text>
+        <text x="517" y="22" font-size="9.5" font-weight="600" fill="#1f4160">4. DECISÃO</text>
+        <text x="652" y="22" font-size="9.5" font-weight="600" fill="#1f4160">5. SAÍDA</text>
       </g>
 
       <g font-size="9.5" fill="#16212b">
         <rect x="16" y="52" width="102" height="40" rx="4" fill="#fff" stroke="#1f4160" stroke-width="1.2"/>
-        <text x="67" y="70" text-anchor="middle">Camera fixa</text>
+        <text x="67" y="70" text-anchor="middle">Câmera fixa</text>
         <text x="67" y="83" text-anchor="middle" font-size="8.5" fill="#6b7a88">RTSP ou USB</text>
 
         <rect x="16" y="104" width="102" height="40" rx="4" fill="#fff" stroke="#1f4160" stroke-width="1.2"/>
-        <text x="67" y="122" text-anchor="middle">Video gravado</text>
+        <text x="67" y="122" text-anchor="middle">Vídeo gravado</text>
         <text x="67" y="135" text-anchor="middle" font-size="8.5" fill="#6b7a88">mp4 / avi / mkv</text>
 
         <rect x="16" y="156" width="102" height="40" rx="4" fill="#fff" stroke="#1f4160" stroke-width="1.2"/>
@@ -300,7 +301,7 @@
 
         <rect x="16" y="296" width="102" height="56" rx="4" fill="#fdf6ec" stroke="#b07d2b" stroke-width="1.2" stroke-dasharray="3 2"/>
         <text x="67" y="316" text-anchor="middle" font-size="9">Mapa de vagas</text>
-        <text x="67" y="329" text-anchor="middle" font-size="8.5" fill="#6b7a88">poligono, id e</text>
+        <text x="67" y="329" text-anchor="middle" font-size="8.5" fill="#6b7a88">polígono, id e</text>
         <text x="67" y="340" text-anchor="middle" font-size="8.5" fill="#6b7a88">setor, em JSON</text>
 
         <rect x="150" y="70" width="126" height="44" rx="4" fill="#fff" stroke="#1f4160" stroke-width="1.2"/>
@@ -309,15 +310,15 @@
 
         <rect x="150" y="128" width="126" height="44" rx="4" fill="#fff" stroke="#1f4160" stroke-width="1.2"/>
         <text x="213" y="146" text-anchor="middle">Letterbox 1280</text>
-        <text x="213" y="159" text-anchor="middle" font-size="8.5" fill="#6b7a88">mantem a proporcao</text>
+        <text x="213" y="159" text-anchor="middle" font-size="8.5" fill="#6b7a88">mantém a proporção</text>
 
         <rect x="150" y="186" width="126" height="52" rx="4" fill="#fff" stroke="#1f4160" stroke-width="1.2"/>
         <text x="213" y="204" text-anchor="middle">Janelas (opcional)</text>
         <text x="213" y="217" text-anchor="middle" font-size="8.5" fill="#6b7a88">recorta 3x2 quando</text>
-        <text x="213" y="228" text-anchor="middle" font-size="8.5" fill="#6b7a88">a camera e distante</text>
+        <text x="213" y="228" text-anchor="middle" font-size="8.5" fill="#6b7a88">a câmera é distante</text>
 
         <rect x="308" y="62" width="126" height="56" rx="4" fill="#1f4160" stroke="#1f4160"/>
-        <text x="371" y="82" text-anchor="middle" fill="#fff" font-weight="600">YOLO11n veiculos</text>
+        <text x="371" y="82" text-anchor="middle" fill="#fff" font-weight="600">YOLO11n veículos</text>
         <text x="371" y="95" text-anchor="middle" fill="#cddce8" font-size="8.5">pesos do COCO</text>
         <text x="371" y="108" text-anchor="middle" fill="#cddce8" font-size="8.5">sem treino</text>
 
@@ -332,9 +333,9 @@
         <text x="371" y="250" text-anchor="middle" font-size="8.5" fill="#6b7a88">ou IoU com o mapa</text>
 
         <rect x="466" y="90" width="102" height="60" rx="4" fill="#fff" stroke="#1f4160" stroke-width="1.2"/>
-        <text x="517" y="110" text-anchor="middle">Suavizacao</text>
+        <text x="517" y="110" text-anchor="middle">Suavização</text>
         <text x="517" y="123" text-anchor="middle" font-size="8.5" fill="#6b7a88">voto das 5</text>
-        <text x="517" y="136" text-anchor="middle" font-size="8.5" fill="#6b7a88">ultimas leituras</text>
+        <text x="517" y="136" text-anchor="middle" font-size="8.5" fill="#6b7a88">últimas leituras</text>
 
         <rect x="466" y="166" width="102" height="56" rx="4" fill="#fff" stroke="#1f4160" stroke-width="1.2"/>
         <text x="517" y="186" text-anchor="middle">Estado da vaga</text>
@@ -343,7 +344,7 @@
 
         <rect x="466" y="240" width="102" height="52" rx="4" fill="#eef3f7" stroke="#1f4160" stroke-width="1.2"/>
         <text x="517" y="260" text-anchor="middle">SQLite</text>
-        <text x="517" y="273" text-anchor="middle" font-size="8.5" fill="#6b7a88">historico por</text>
+        <text x="517" y="273" text-anchor="middle" font-size="8.5" fill="#6b7a88">histórico por</text>
         <text x="517" y="284" text-anchor="middle" font-size="8.5" fill="#6b7a88">vaga e instante</text>
 
         <rect x="600" y="52" width="104" height="46" rx="4" fill="#fff" stroke="#1f4160" stroke-width="1.2"/>
@@ -356,11 +357,11 @@
 
         <rect x="600" y="168" width="104" height="46" rx="4" fill="#fff" stroke="#1f4160" stroke-width="1.2"/>
         <text x="652" y="188" text-anchor="middle">Curva do dia</text>
-        <text x="652" y="201" text-anchor="middle" font-size="8.5" fill="#6b7a88">ocupacao por hora</text>
+        <text x="652" y="201" text-anchor="middle" font-size="8.5" fill="#6b7a88">ocupação por hora</text>
 
         <rect x="600" y="226" width="104" height="46" rx="4" fill="#fff" stroke="#1f4160" stroke-width="1.2"/>
-        <text x="652" y="246" text-anchor="middle">Exportacao</text>
-        <text x="652" y="259" text-anchor="middle" font-size="8.5" fill="#6b7a88">CSV e video</text>
+        <text x="652" y="246" text-anchor="middle">Exportação</text>
+        <text x="652" y="259" text-anchor="middle" font-size="8.5" fill="#6b7a88">CSV e vídeo</text>
       </g>
 
       <g stroke="#1f4160" stroke-width="1.3" fill="none" marker-end="url(#seta)">
@@ -382,7 +383,7 @@
       </g>
 
       <text x="360" y="410" text-anchor="middle" font-size="8.5" fill="#6b7a88">
-        Os dois detectores sao intercambiaveis: o resto do sistema nao sabe qual deles esta carregado.
+        Os dois detectores são intercambiáveis: o resto do sistema não sabe qual deles está carregado.
       </text>
     </svg>
     <figcaption><strong>Figura 1.</strong> Arquitetura do Baliza. A faixa 3 é o núcleo de visão
@@ -447,7 +448,7 @@
 
   <h3>6.2 Quantidade, classes e anotação</h3>
   <table>
-    <thead><tr><th>Estacionamento</th><th class="c">Fotos</th><th class="c">Vagas por foto</th><th>Característica da câmera</th></tr></thead>
+    <thead><tr><th style="width:17%">Estacionamento</th><th class="c">Fotos</th><th class="c">Vagas por foto</th><th>Característica da câmera</th></tr></thead>
     <tbody>
       <tr><td>UFPR04</td><td class="c">3.791</td><td class="c">28</td><td>Quarto andar, pátio próximo. Carro grande no quadro.</td></tr>
       <tr><td>UFPR05</td><td class="c">4.152</td><td class="c">40</td><td>Quinto andar, ângulo mais aberto.</td></tr>
@@ -485,26 +486,26 @@
         <rect x="8" y="26" width="200" height="96" rx="4" fill="#eef7f0" stroke="#2e6f3e" stroke-width="1.2"/>
         <text x="108" y="18" text-anchor="middle" font-size="9" font-weight="600" fill="#2e6f3e">TREINO</text>
         <text x="108" y="50" text-anchor="middle" font-weight="600">PUCPR + UFPR04</text>
-        <text x="108" y="70" text-anchor="middle" font-size="9" fill="#4a5b6b">dias pares do mes</text>
+        <text x="108" y="70" text-anchor="middle" font-size="9" fill="#4a5b6b">dias pares do mês</text>
         <text x="108" y="88" text-anchor="middle" font-size="9" fill="#4a5b6b">sol, nublado e chuva</text>
         <text x="108" y="108" text-anchor="middle" font-size="9" fill="#4a5b6b">971 imagens exportadas</text>
 
         <rect x="222" y="26" width="200" height="96" rx="4" fill="#fdf6ec" stroke="#b07d2b" stroke-width="1.2"/>
-        <text x="322" y="18" text-anchor="middle" font-size="9" font-weight="600" fill="#b07d2b">VALIDACAO</text>
-        <text x="322" y="50" text-anchor="middle" font-weight="600">mesmas cameras</text>
-        <text x="322" y="70" text-anchor="middle" font-size="9" fill="#4a5b6b">dias impares, nunca vistos</text>
+        <text x="322" y="18" text-anchor="middle" font-size="9" font-weight="600" fill="#b07d2b">VALIDAÇÃO</text>
+        <text x="322" y="50" text-anchor="middle" font-weight="600">mesmas câmeras</text>
+        <text x="322" y="70" text-anchor="middle" font-size="9" fill="#4a5b6b">dias ímpares, nunca vistos</text>
         <text x="322" y="88" text-anchor="middle" font-size="9" fill="#4a5b6b">calibra o limiar e a curva</text>
         <text x="322" y="108" text-anchor="middle" font-size="9" fill="#4a5b6b">278 imagens, 17.108 vagas</text>
 
         <rect x="436" y="26" width="256" height="96" rx="4" fill="#fbf0ee" stroke="#a33227" stroke-width="1.2"/>
-        <text x="564" y="18" text-anchor="middle" font-size="9" font-weight="600" fill="#a33227">TESTE (so no fim)</text>
+        <text x="564" y="18" text-anchor="middle" font-size="9" font-weight="600" fill="#a33227">TESTE (só no fim)</text>
         <text x="564" y="50" text-anchor="middle" font-weight="600">UFPR05 inteira</text>
-        <text x="564" y="70" text-anchor="middle" font-size="9" fill="#4a5b6b">camera e angulo nunca vistos</text>
-        <text x="564" y="88" text-anchor="middle" font-size="9" fill="#4a5b6b">mede generalizacao de verdade</text>
+        <text x="564" y="70" text-anchor="middle" font-size="9" fill="#4a5b6b">câmera e ângulo nunca vistos</text>
+        <text x="564" y="88" text-anchor="middle" font-size="9" fill="#4a5b6b">mede generalização de verdade</text>
         <text x="564" y="108" text-anchor="middle" font-size="9" fill="#4a5b6b">401 imagens exportadas</text>
 
         <text x="350" y="148" text-anchor="middle" font-size="9" fill="#6b7a88">
-          Nenhuma foto do mesmo dia e da mesma camera aparece em dois conjuntos diferentes.
+          Nenhuma foto do mesmo dia e da mesma câmera aparece em dois conjuntos diferentes.
         </text>
       </g>
     </svg>
@@ -720,7 +721,7 @@
   não depende de nenhuma compra.</p>
 
   <table>
-    <thead><tr><th style="width:16%">Item</th><th style="width:40%">Descrição</th><th class="c" style="width:11%">Disponível?</th><th>Uso no projeto</th></tr></thead>
+    <thead><tr><th style="width:16%">Item</th><th style="width:40%">Descrição</th><th class="c" style="width:13%">Disponível?</th><th>Uso no projeto</th></tr></thead>
     <tbody>
       <tr><td>Computador</td><td>Desktop Ryzen 3 3200G, 16 GB DDR4, SSD 480 GB e HD de 1 TB</td><td class="c">Sim</td><td>Treino, inferência e desenvolvimento</td></tr>
       <tr><td>GPU</td><td>NVIDIA GeForce GTX 1650, 4 GB GDDR6, driver 610.88, CUDA 12.8</td><td class="c">Sim</td><td>Treino do YOLO11n e inferência em tempo real</td></tr>
@@ -752,7 +753,7 @@
       <tr><td>Treino do detector de vagas</td><td>GTX 1650</td><td>cerca de 9 minutos por época</td></tr>
       <tr><td>Inferência, quadro de 1280 px</td><td>GTX 1650</td><td>47 a 100 ms, ou seja 10 a 21 quadros por segundo</td></tr>
       <tr><td>Inferência com janelas 3x2</td><td>GTX 1650</td><td>cerca de 350 ms por quadro</td></tr>
-      <tr><td>Suíte de testes (107 testes)</td><td>CPU</td><td>menos de 1 minuto</td></tr>
+      <tr><td>Suíte de testes (111 testes)</td><td>CPU</td><td>menos de 1 minuto</td></tr>
     </tbody>
   </table>
   <p class="tab-legenda">Tabela 8. Custo em dinheiro: zero. Todo o software é livre ou tem plano
@@ -781,7 +782,7 @@
     <tbody>
       <tr><td>Pesquisa, escopo e proposta (P1)</td><td class="c x">X</td><td class="c"></td><td class="c"></td><td class="c"></td><td>Concluído</td></tr>
       <tr><td>Base: download, conversão e divisão por câmera</td><td class="c x">X</td><td class="c"></td><td class="c"></td><td class="c"></td><td>Concluído</td></tr>
-      <tr><td>Núcleo do sistema, com testes</td><td class="c x">X</td><td class="c"></td><td class="c"></td><td class="c"></td><td>Concluído, 107 testes</td></tr>
+      <tr><td>Núcleo do sistema, com testes</td><td class="c x">X</td><td class="c"></td><td class="c"></td><td class="c"></td><td>Concluído, 111 testes</td></tr>
       <tr><td>Detector sem treino e calibração do limiar</td><td class="c x">X</td><td class="c"></td><td class="c"></td><td class="c"></td><td>Concluído e medido</td></tr>
       <tr><td>Treino do detector de vagas no PKLot</td><td class="c x">X</td><td class="c x">X</td><td class="c"></td><td class="c"></td><td>Primeira rodada feita</td></tr>
       <tr><td>Painel web e histórico</td><td class="c x">X</td><td class="c x">X</td><td class="c"></td><td class="c"></td><td>Funcionando, falta refinar</td></tr>
@@ -865,7 +866,7 @@
       <tr><td>Mesma métrica, detector treinado</td><td class="c">&ge; 85%</td><td class="c ruim">25,6%</td><td>Não generaliza; ver seção 7.6</td></tr>
       <tr><td>Falso livre, câmera nunca vista</td><td class="c">&le; 3%</td><td class="c bom">0,9%</td><td>Detector de veículos com janelas 3x2</td></tr>
       <tr><td>Velocidade, GPU</td><td class="c">&ge; 15 q/s</td><td class="c bom">37 a 40 q/s</td><td>25 a 27 ms por quadro, quadro inteiro</td></tr>
-      <tr><td>Cobertura de testes</td><td class="c">&ge; 80%</td><td class="c bom">82%</td><td>110 testes, sem contar os que carregam o modelo</td></tr>
+      <tr><td>Cobertura de testes</td><td class="c">&ge; 80%</td><td class="c bom">85%</td><td>111 testes, um deles carregando o modelo de verdade</td></tr>
     </tbody>
   </table>
   <p>Das oito metas, sete foram atingidas e uma falhou, e a que falhou é a mais informativa do

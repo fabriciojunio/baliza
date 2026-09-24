@@ -8,8 +8,8 @@ tudo e o número não descreve nada.
 Por isso a divisão é por câmera e por dia:
 
     treino     PUCPR e UFPR04, dias pares
-    validacao  PUCPR e UFPR04, dias impares
-    teste      UFPR05 inteiro, uma camera que o modelo nunca viu
+    validacao  PUCPR e UFPR04, dias ímpares
+    teste      UFPR05 inteiro, uma câmera que o modelo nunca viu
 
 Nenhuma foto do mesmo dia e da mesma câmera aparece em dois conjuntos.
 """

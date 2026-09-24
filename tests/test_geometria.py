@@ -51,7 +51,7 @@ def test_fracao_coberta_vai_de_zero_a_um():
 
 
 def test_caminhao_que_transborda_ainda_cobre_a_vaga_inteira():
-    """A razao escolhida nao pune a caixa grande demais, e a IoU puniria."""
+    """A razao escolhida não pune a caixa grande demais, e a IoU puniria."""
     caminhao = (-20, -20, 40, 40)
     assert fracao_coberta(QUADRADO, caminhao) == pytest.approx(1.0)
     assert iou(QUADRADO, caminhao) < 0.05

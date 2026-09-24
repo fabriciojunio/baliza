@@ -30,7 +30,7 @@ CREATE INDEX IF NOT EXISTS idx_leitura_vaga ON leitura (camera, vaga_id, instant
 
 
 def agora() -> str:
-    # Milissegundos, e nao segundos: o sistema chega a ler mais de um quadro
+    # Milissegundos, e não segundos: o sistema chega a ler mais de um quadro
     # por segundo, e dois quadros com o mesmo carimbo viram uma leitura so na
     # hora de perguntar qual e o estado atual.
     return datetime.now(timezone.utc).astimezone().isoformat(timespec="milliseconds")

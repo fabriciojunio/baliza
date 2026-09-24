@@ -1,0 +1,80 @@
+{
+  "patios": {
+    "ufpr04": {
+      "estacionamento": "UFPR04",
+      "clima": "Sunny",
+      "dia": "2012-12-16",
+      "vagas": 28,
+      "setores": [
+        "A",
+        "B",
+        "C"
+      ],
+      "quadros_no_video": 99,
+      "primeira_foto": "2012-12-16_11_55_07",
+      "ultima_foto": "2012-12-16_20_05_17"
+    },
+    "ufpr05": {
+      "estacionamento": "UFPR05",
+      "clima": "Cloudy",
+      "dia": "2013-03-12",
+      "vagas": 40,
+      "setores": [
+        "A",
+        "B",
+        "C"
+      ],
+      "quadros_no_video": 104,
+      "primeira_foto": "2013-03-12_06_15_00",
+      "ultima_foto": "2013-03-12_18_25_14"
+    },
+    "pucpr": {
+      "estacionamento": "PUCPR",
+      "clima": "Sunny",
+      "dia": "2012-10-29",
+      "vagas": 100,
+      "setores": [
+        "A",
+        "B",
+        "C"
+      ],
+      "quadros_no_video": 161,
+      "primeira_foto": "2012-10-29_06_17_51",
+      "ultima_foto": "2012-10-29_19_38_34"
+    }
+  },
+  "anotado": {
+    "pucpr_treinado": {
+      "quadros": 161,
+      "vagas": 100,
+      "ms_por_quadro": 53.4,
+      "ocupadas_min": 1,
+      "ocupadas_max": 100,
+      "livres_no_fim": 0
+    },
+    "pucpr": {
+      "quadros": 161,
+      "vagas": 100,
+      "ms_por_quadro": 44.3,
+      "ocupadas_min": 0,
+      "ocupadas_max": 38,
+      "livres_no_fim": 96
+    },
+    "ufpr04": {
+      "quadros": 99,
+      "vagas": 28,
+      "ms_por_quadro": 30.8,
+      "ocupadas_min": 1,
+      "ocupadas_max": 28,
+      "livres_no_fim": 27
+    },
+    "ufpr05": {
+      "quadros": 104,
+      "vagas": 40,
+      "ms_por_quadro": 28.4,
+      "ocupadas_min": 0,
+      "ocupadas_max": 40,
+      "livres_no_fim": 2
+    }
+  }
+}

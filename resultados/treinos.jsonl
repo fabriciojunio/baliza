@@ -1,0 +1,1 @@
+{"dados": "dados/yolo/pklot.yaml", "pesos": "modelos/yolo11n.pt", "epocas": 30, "tamanho": 1280, "lote": 4, "paciencia": 8, "nome": "vagas", "lote_usado": 4, "pasta": "C:\\Users\\junio\\Downloads\\dev\\baliza\\runs\\vagas", "melhor": "C:\\Users\\junio\\Downloads\\dev\\baliza\\runs\\vagas\\weights\\best.pt"}

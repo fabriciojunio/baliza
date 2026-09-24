@@ -1,0 +1,109 @@
+{
+  "varredura": [
+    {
+      "limiar": 0.05,
+      "acuracia": 0.7082,
+      "falso_livre": 0.5284,
+      "falso_ocupado": 0.0727
+    },
+    {
+      "limiar": 0.1,
+      "acuracia": 0.7165,
+      "falso_livre": 0.5405,
+      "falso_ocupado": 0.0456
+    },
+    {
+      "limiar": 0.15,
+      "acuracia": 0.722,
+      "falso_livre": 0.5465,
+      "falso_ocupado": 0.0294
+    },
+    {
+      "limiar": 0.2,
+      "acuracia": 0.7267,
+      "falso_livre": 0.5502,
+      "falso_ocupado": 0.0171
+    },
+    {
+      "limiar": 0.25,
+      "acuracia": 0.7293,
+      "falso_livre": 0.552,
+      "falso_ocupado": 0.0103
+    },
+    {
+      "limiar": 0.3,
+      "acuracia": 0.7308,
+      "falso_livre": 0.5529,
+      "falso_ocupado": 0.0067
+    },
+    {
+      "limiar": 0.35,
+      "acuracia": 0.7316,
+      "falso_livre": 0.5532,
+      "falso_ocupado": 0.0048
+    },
+    {
+      "limiar": 0.4,
+      "acuracia": 0.7328,
+      "falso_livre": 0.5532,
+      "falso_ocupado": 0.0025
+    },
+    {
+      "limiar": 0.45,
+      "acuracia": 0.7328,
+      "falso_livre": 0.5544,
+      "falso_ocupado": 0.0014
+    },
+    {
+      "limiar": 0.5,
+      "acuracia": 0.7331,
+      "falso_livre": 0.5544,
+      "falso_ocupado": 0.0008
+    },
+    {
+      "limiar": 0.55,
+      "acuracia": 0.7326,
+      "falso_livre": 0.5556,
+      "falso_ocupado": 0.0006
+    },
+    {
+      "limiar": 0.6,
+      "acuracia": 0.73,
+      "falso_livre": 0.561,
+      "falso_ocupado": 0.0006
+    },
+    {
+      "limiar": 0.65,
+      "acuracia": 0.7251,
+      "falso_livre": 0.5713,
+      "falso_ocupado": 0.0006
+    },
+    {
+      "limiar": 0.7,
+      "acuracia": 0.7155,
+      "falso_livre": 0.5915,
+      "falso_ocupado": 0.0003
+    },
+    {
+      "limiar": 0.75,
+      "acuracia": 0.6974,
+      "falso_livre": 0.6293,
+      "falso_ocupado": 0.0003
+    },
+    {
+      "limiar": 0.8,
+      "acuracia": 0.6589,
+      "falso_livre": 0.7094,
+      "falso_ocupado": 0.0003
+    }
+  ],
+  "escolhido": {
+    "limiar": 0.5,
+    "acuracia": 0.7331,
+    "falso_livre": 0.5544,
+    "falso_ocupado": 0.0008
+  },
+  "amostras": 120,
+  "vagas": 6886,
+  "conjunto": "validacao"
+}

@@ -1,0 +1,44 @@
+{
+  "ufpr04": {
+    "veiculos": {
+      "acuracia": 0.9878,
+      "falso_livre": 0.0063,
+      "sem_leitura": 0.0,
+      "vagas": 2708
+    },
+    "vagas": {
+      "acuracia": 0.9989,
+      "falso_livre": 0.0015,
+      "sem_leitura": 0.0,
+      "vagas": 2708
+    }
+  },
+  "ufpr05": {
+    "veiculos": {
+      "acuracia": 0.9792,
+      "falso_livre": 0.0238,
+      "sem_leitura": 0.0,
+      "vagas": 4129
+    },
+    "vagas": {
+      "acuracia": 0.286,
+      "falso_livre": 0.0,
+      "sem_leitura": 0.7123,
+      "vagas": 4129
+    }
+  },
+  "pucpr": {
+    "veiculos": {
+      "acuracia": 0.4354,
+      "falso_livre": 0.8148,
+      "sem_leitura": 0.0,
+      "vagas": 16093
+    },
+    "vagas": {
+      "acuracia": 0.9805,
+      "falso_livre": 0.0004,
+      "sem_leitura": 0.0193,
+      "vagas": 16093
+    }
+  }
+}

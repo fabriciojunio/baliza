@@ -25,3 +25,8 @@ SOFTWARE.
 
 A base PKLot e distribuida sob CC BY 4.0 pela UFPR e nao faz parte deste
 repositorio. Ver README.md.
+
+O detector usa Ultralytics YOLO, distribuido sob AGPL-3.0. Os pesos em
+modelos/yolo11n.pt sao da Ultralytics e os de modelos/vagas*.pt foram
+treinados a partir deles, entao seguem a mesma licenca. A licenca MIT acima
+cobre o codigo escrito por nos.

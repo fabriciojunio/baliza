@@ -1,0 +1,671 @@
+{
+  "Veículos, quadro inteiro | validacao": {
+    "conjunto": "validacao",
+    "modo": "veiculos",
+    "pesos": "modelos/yolo11n.pt",
+    "janelas": "quadro inteiro",
+    "tamanho": 1280,
+    "confianca": 0.25,
+    "limiar_cobertura": 0.3,
+    "fotos": 58,
+    "fotos_descartadas": 2,
+    "segundos": 5.3,
+    "ms_por_quadro": 72.3,
+    "quadros_por_segundo": 13.83,
+    "geral": {
+      "vagas_avaliadas": 3777,
+      "matriz": {
+        "vo_po": 718,
+        "vo_pl": 1115,
+        "vl_po": 12,
+        "vl_pl": 1932,
+        "sem_leitura": 0
+      },
+      "acuracia": 0.7016,
+      "acuracia_sobre_todas": 0.7016,
+      "falso_livre": 0.6083,
+      "falso_ocupado": 0.0062,
+      "precisao_ocupada": 0.9836,
+      "revocacao_ocupada": 0.3917,
+      "taxa_sem_leitura": 0.0
+    },
+    "grupos": {
+      "Cloudy": {
+        "vagas_avaliadas": 696,
+        "matriz": {
+          "vo_po": 104,
+          "vo_pl": 39,
+          "vl_po": 3,
+          "vl_pl": 550,
+          "sem_leitura": 0
+        },
+        "acuracia": 0.9397,
+        "acuracia_sobre_todas": 0.9397,
+        "falso_livre": 0.2727,
+        "falso_ocupado": 0.0054,
+        "precisao_ocupada": 0.972,
+        "revocacao_ocupada": 0.7273,
+        "taxa_sem_leitura": 0.0
+      },
+      "PUCPR": {
+        "vagas_avaliadas": 2996,
+        "matriz": {
+          "vo_po": 264,
+          "vo_pl": 1105,
+          "vl_po": 8,
+          "vl_pl": 1619,
+          "sem_leitura": 0
+        },
+        "acuracia": 0.6285,
+        "acuracia_sobre_todas": 0.6285,
+        "falso_livre": 0.8072,
+        "falso_ocupado": 0.0049,
+        "precisao_ocupada": 0.9706,
+        "revocacao_ocupada": 0.1928,
+        "taxa_sem_leitura": 0.0
+      },
+      "Rainy": {
+        "vagas_avaliadas": 794,
+        "matriz": {
+          "vo_po": 147,
+          "vo_pl": 423,
+          "vl_po": 2,
+          "vl_pl": 222,
+          "sem_leitura": 0
+        },
+        "acuracia": 0.4647,
+        "acuracia_sobre_todas": 0.4647,
+        "falso_livre": 0.7421,
+        "falso_ocupado": 0.0089,
+        "precisao_ocupada": 0.9866,
+        "revocacao_ocupada": 0.2579,
+        "taxa_sem_leitura": 0.0
+      },
+      "Sunny": {
+        "vagas_avaliadas": 2287,
+        "matriz": {
+          "vo_po": 467,
+          "vo_pl": 653,
+          "vl_po": 7,
+          "vl_pl": 1160,
+          "sem_leitura": 0
+        },
+        "acuracia": 0.7114,
+        "acuracia_sobre_todas": 0.7114,
+        "falso_livre": 0.583,
+        "falso_ocupado": 0.006,
+        "precisao_ocupada": 0.9852,
+        "revocacao_ocupada": 0.417,
+        "taxa_sem_leitura": 0.0
+      },
+      "UFPR04": {
+        "vagas_avaliadas": 781,
+        "matriz": {
+          "vo_po": 454,
+          "vo_pl": 10,
+          "vl_po": 4,
+          "vl_pl": 313,
+          "sem_leitura": 0
+        },
+        "acuracia": 0.9821,
+        "acuracia_sobre_todas": 0.9821,
+        "falso_livre": 0.0216,
+        "falso_ocupado": 0.0126,
+        "precisao_ocupada": 0.9913,
+        "revocacao_ocupada": 0.9784,
+        "taxa_sem_leitura": 0.0
+      }
+    },
+    "configuracao": "Veículos, quadro inteiro",
+    "detalhe": "YOLO11n do COCO, sem treino, imagem inteira"
+  },
+  "Veículos, quadro inteiro | teste": {
+    "conjunto": "teste",
+    "modo": "veiculos",
+    "pesos": "modelos/yolo11n.pt",
+    "janelas": "quadro inteiro",
+    "tamanho": 1280,
+    "confianca": 0.25,
+    "limiar_cobertura": 0.3,
+    "fotos": 60,
+    "fotos_descartadas": 0,
+    "segundos": 2.8,
+    "ms_por_quadro": 26.6,
+    "quadros_por_segundo": 37.62,
+    "geral": {
+      "vagas_avaliadas": 2399,
+      "matriz": {
+        "vo_po": 1427,
+        "vo_pl": 42,
+        "vl_po": 4,
+        "vl_pl": 926,
+        "sem_leitura": 0
+      },
+      "acuracia": 0.9808,
+      "acuracia_sobre_todas": 0.9808,
+      "falso_livre": 0.0286,
+      "falso_ocupado": 0.0043,
+      "precisao_ocupada": 0.9972,
+      "revocacao_ocupada": 0.9714,
+      "taxa_sem_leitura": 0.0
+    },
+    "grupos": {
+      "Cloudy": {
+        "vagas_avaliadas": 760,
+        "matriz": {
+          "vo_po": 319,
+          "vo_pl": 5,
+          "vl_po": 3,
+          "vl_pl": 433,
+          "sem_leitura": 0
+        },
+        "acuracia": 0.9895,
+        "acuracia_sobre_todas": 0.9895,
+        "falso_livre": 0.0154,
+        "falso_ocupado": 0.0069,
+        "precisao_ocupada": 0.9907,
+        "revocacao_ocupada": 0.9846,
+        "taxa_sem_leitura": 0.0
+      },
+      "Rainy": {
+        "vagas_avaliadas": 319,
+        "matriz": {
+          "vo_po": 196,
+          "vo_pl": 5,
+          "vl_po": 0,
+          "vl_pl": 118,
+          "sem_leitura": 0
+        },
+        "acuracia": 0.9843,
+        "acuracia_sobre_todas": 0.9843,
+        "falso_livre": 0.0249,
+        "falso_ocupado": 0.0,
+        "precisao_ocupada": 1.0,
+        "revocacao_ocupada": 0.9751,
+        "taxa_sem_leitura": 0.0
+      },
+      "Sunny": {
+        "vagas_avaliadas": 1320,
+        "matriz": {
+          "vo_po": 912,
+          "vo_pl": 32,
+          "vl_po": 1,
+          "vl_pl": 375,
+          "sem_leitura": 0
+        },
+        "acuracia": 0.975,
+        "acuracia_sobre_todas": 0.975,
+        "falso_livre": 0.0339,
+        "falso_ocupado": 0.0027,
+        "precisao_ocupada": 0.9989,
+        "revocacao_ocupada": 0.9661,
+        "taxa_sem_leitura": 0.0
+      },
+      "UFPR05": {
+        "vagas_avaliadas": 2399,
+        "matriz": {
+          "vo_po": 1427,
+          "vo_pl": 42,
+          "vl_po": 4,
+          "vl_pl": 926,
+          "sem_leitura": 0
+        },
+        "acuracia": 0.9808,
+        "acuracia_sobre_todas": 0.9808,
+        "falso_livre": 0.0286,
+        "falso_ocupado": 0.0043,
+        "precisao_ocupada": 0.9972,
+        "revocacao_ocupada": 0.9714,
+        "taxa_sem_leitura": 0.0
+      }
+    },
+    "configuracao": "Veículos, quadro inteiro",
+    "detalhe": "YOLO11n do COCO, sem treino, imagem inteira"
+  },
+  "Veículos, janelas 3x2 | validacao": {
+    "conjunto": "validacao",
+    "modo": "veiculos",
+    "pesos": "modelos/yolo11n.pt",
+    "janelas": "3x2",
+    "tamanho": 1280,
+    "confianca": 0.25,
+    "limiar_cobertura": 0.3,
+    "fotos": 58,
+    "fotos_descartadas": 2,
+    "segundos": 18.9,
+    "ms_por_quadro": 200.4,
+    "quadros_por_segundo": 4.99,
+    "geral": {
+      "vagas_avaliadas": 3777,
+      "matriz": {
+        "vo_po": 1380,
+        "vo_pl": 453,
+        "vl_po": 12,
+        "vl_pl": 1932,
+        "sem_leitura": 0
+      },
+      "acuracia": 0.8769,
+      "acuracia_sobre_todas": 0.8769,
+      "falso_livre": 0.2471,
+      "falso_ocupado": 0.0062,
+      "precisao_ocupada": 0.9914,
+      "revocacao_ocupada": 0.7529,
+      "taxa_sem_leitura": 0.0
+    },
+    "grupos": {
+      "Cloudy": {
+        "vagas_avaliadas": 696,
+        "matriz": {
+          "vo_po": 110,
+          "vo_pl": 33,
+          "vl_po": 3,
+          "vl_pl": 550,
+          "sem_leitura": 0
+        },
+        "acuracia": 0.9483,
+        "acuracia_sobre_todas": 0.9483,
+        "falso_livre": 0.2308,
+        "falso_ocupado": 0.0054,
+        "precisao_ocupada": 0.9735,
+        "revocacao_ocupada": 0.7692,
+        "taxa_sem_leitura": 0.0
+      },
+      "PUCPR": {
+        "vagas_avaliadas": 2996,
+        "matriz": {
+          "vo_po": 927,
+          "vo_pl": 442,
+          "vl_po": 8,
+          "vl_pl": 1619,
+          "sem_leitura": 0
+        },
+        "acuracia": 0.8498,
+        "acuracia_sobre_todas": 0.8498,
+        "falso_livre": 0.3229,
+        "falso_ocupado": 0.0049,
+        "precisao_ocupada": 0.9914,
+        "revocacao_ocupada": 0.6771,
+        "taxa_sem_leitura": 0.0
+      },
+      "Rainy": {
+        "vagas_avaliadas": 794,
+        "matriz": {
+          "vo_po": 460,
+          "vo_pl": 110,
+          "vl_po": 2,
+          "vl_pl": 222,
+          "sem_leitura": 0
+        },
+        "acuracia": 0.8589,
+        "acuracia_sobre_todas": 0.8589,
+        "falso_livre": 0.193,
+        "falso_ocupado": 0.0089,
+        "precisao_ocupada": 0.9957,
+        "revocacao_ocupada": 0.807,
+        "taxa_sem_leitura": 0.0
+      },
+      "Sunny": {
+        "vagas_avaliadas": 2287,
+        "matriz": {
+          "vo_po": 810,
+          "vo_pl": 310,
+          "vl_po": 7,
+          "vl_pl": 1160,
+          "sem_leitura": 0
+        },
+        "acuracia": 0.8614,
+        "acuracia_sobre_todas": 0.8614,
+        "falso_livre": 0.2768,
+        "falso_ocupado": 0.006,
+        "precisao_ocupada": 0.9914,
+        "revocacao_ocupada": 0.7232,
+        "taxa_sem_leitura": 0.0
+      },
+      "UFPR04": {
+        "vagas_avaliadas": 781,
+        "matriz": {
+          "vo_po": 453,
+          "vo_pl": 11,
+          "vl_po": 4,
+          "vl_pl": 313,
+          "sem_leitura": 0
+        },
+        "acuracia": 0.9808,
+        "acuracia_sobre_todas": 0.9808,
+        "falso_livre": 0.0237,
+        "falso_ocupado": 0.0126,
+        "precisao_ocupada": 0.9912,
+        "revocacao_ocupada": 0.9763,
+        "taxa_sem_leitura": 0.0
+      }
+    },
+    "configuracao": "Veículos, janelas 3x2",
+    "detalhe": "YOLO11n do COCO, sem treino, quadro recortado em 6 janelas"
+  },
+  "Veículos, janelas 3x2 | teste": {
+    "conjunto": "teste",
+    "modo": "veiculos",
+    "pesos": "modelos/yolo11n.pt",
+    "janelas": "3x2",
+    "tamanho": 1280,
+    "confianca": 0.25,
+    "limiar_cobertura": 0.3,
+    "fotos": 60,
+    "fotos_descartadas": 0,
+    "segundos": 15.9,
+    "ms_por_quadro": 202.4,
+    "quadros_por_segundo": 4.94,
+    "geral": {
+      "vagas_avaliadas": 2399,
+      "matriz": {
+        "vo_po": 1455,
+        "vo_pl": 14,
+        "vl_po": 4,
+        "vl_pl": 926,
+        "sem_leitura": 0
+      },
+      "acuracia": 0.9925,
+      "acuracia_sobre_todas": 0.9925,
+      "falso_livre": 0.0095,
+      "falso_ocupado": 0.0043,
+      "precisao_ocupada": 0.9973,
+      "revocacao_ocupada": 0.9905,
+      "taxa_sem_leitura": 0.0
+    },
+    "grupos": {
+      "Cloudy": {
+        "vagas_avaliadas": 760,
+        "matriz": {
+          "vo_po": 323,
+          "vo_pl": 1,
+          "vl_po": 2,
+          "vl_pl": 434,
+          "sem_leitura": 0
+        },
+        "acuracia": 0.9961,
+        "acuracia_sobre_todas": 0.9961,
+        "falso_livre": 0.0031,
+        "falso_ocupado": 0.0046,
+        "precisao_ocupada": 0.9938,
+        "revocacao_ocupada": 0.9969,
+        "taxa_sem_leitura": 0.0
+      },
+      "Rainy": {
+        "vagas_avaliadas": 319,
+        "matriz": {
+          "vo_po": 197,
+          "vo_pl": 4,
+          "vl_po": 0,
+          "vl_pl": 118,
+          "sem_leitura": 0
+        },
+        "acuracia": 0.9875,
+        "acuracia_sobre_todas": 0.9875,
+        "falso_livre": 0.0199,
+        "falso_ocupado": 0.0,
+        "precisao_ocupada": 1.0,
+        "revocacao_ocupada": 0.9801,
+        "taxa_sem_leitura": 0.0
+      },
+      "Sunny": {
+        "vagas_avaliadas": 1320,
+        "matriz": {
+          "vo_po": 935,
+          "vo_pl": 9,
+          "vl_po": 2,
+          "vl_pl": 374,
+          "sem_leitura": 0
+        },
+        "acuracia": 0.9917,
+        "acuracia_sobre_todas": 0.9917,
+        "falso_livre": 0.0095,
+        "falso_ocupado": 0.0053,
+        "precisao_ocupada": 0.9979,
+        "revocacao_ocupada": 0.9905,
+        "taxa_sem_leitura": 0.0
+      },
+      "UFPR05": {
+        "vagas_avaliadas": 2399,
+        "matriz": {
+          "vo_po": 1455,
+          "vo_pl": 14,
+          "vl_po": 4,
+          "vl_pl": 926,
+          "sem_leitura": 0
+        },
+        "acuracia": 0.9925,
+        "acuracia_sobre_todas": 0.9925,
+        "falso_livre": 0.0095,
+        "falso_ocupado": 0.0043,
+        "precisao_ocupada": 0.9973,
+        "revocacao_ocupada": 0.9905,
+        "taxa_sem_leitura": 0.0
+      }
+    },
+    "configuracao": "Veículos, janelas 3x2",
+    "detalhe": "YOLO11n do COCO, sem treino, quadro recortado em 6 janelas"
+  },
+  "Vagas, treinado no PKLot | validacao": {
+    "conjunto": "validacao",
+    "modo": "vagas",
+    "pesos": "modelos/vagas.pt",
+    "janelas": "quadro inteiro",
+    "tamanho": 1280,
+    "confianca": 0.25,
+    "limiar_cobertura": null,
+    "fotos": 58,
+    "fotos_descartadas": 2,
+    "segundos": 3.8,
+    "ms_por_quadro": 26.2,
+    "quadros_por_segundo": 38.16,
+    "geral": {
+      "vagas_avaliadas": 3777,
+      "matriz": {
+        "vo_po": 1831,
+        "vo_pl": 1,
+        "vl_po": 0,
+        "vl_pl": 1944,
+        "sem_leitura": 1
+      },
+      "acuracia": 0.9997,
+      "acuracia_sobre_todas": 0.9995,
+      "falso_livre": 0.0005,
+      "falso_ocupado": 0.0,
+      "precisao_ocupada": 1.0,
+      "revocacao_ocupada": 0.9995,
+      "taxa_sem_leitura": 0.0003
+    },
+    "grupos": {
+      "Cloudy": {
+        "vagas_avaliadas": 696,
+        "matriz": {
+          "vo_po": 142,
+          "vo_pl": 0,
+          "vl_po": 0,
+          "vl_pl": 553,
+          "sem_leitura": 1
+        },
+        "acuracia": 1.0,
+        "acuracia_sobre_todas": 0.9986,
+        "falso_livre": 0.0,
+        "falso_ocupado": 0.0,
+        "precisao_ocupada": 1.0,
+        "revocacao_ocupada": 1.0,
+        "taxa_sem_leitura": 0.0014
+      },
+      "PUCPR": {
+        "vagas_avaliadas": 2996,
+        "matriz": {
+          "vo_po": 1367,
+          "vo_pl": 1,
+          "vl_po": 0,
+          "vl_pl": 1627,
+          "sem_leitura": 1
+        },
+        "acuracia": 0.9997,
+        "acuracia_sobre_todas": 0.9993,
+        "falso_livre": 0.0007,
+        "falso_ocupado": 0.0,
+        "precisao_ocupada": 1.0,
+        "revocacao_ocupada": 0.9993,
+        "taxa_sem_leitura": 0.0003
+      },
+      "Rainy": {
+        "vagas_avaliadas": 794,
+        "matriz": {
+          "vo_po": 569,
+          "vo_pl": 1,
+          "vl_po": 0,
+          "vl_pl": 224,
+          "sem_leitura": 0
+        },
+        "acuracia": 0.9987,
+        "acuracia_sobre_todas": 0.9987,
+        "falso_livre": 0.0018,
+        "falso_ocupado": 0.0,
+        "precisao_ocupada": 1.0,
+        "revocacao_ocupada": 0.9982,
+        "taxa_sem_leitura": 0.0
+      },
+      "Sunny": {
+        "vagas_avaliadas": 2287,
+        "matriz": {
+          "vo_po": 1120,
+          "vo_pl": 0,
+          "vl_po": 0,
+          "vl_pl": 1167,
+          "sem_leitura": 0
+        },
+        "acuracia": 1.0,
+        "acuracia_sobre_todas": 1.0,
+        "falso_livre": 0.0,
+        "falso_ocupado": 0.0,
+        "precisao_ocupada": 1.0,
+        "revocacao_ocupada": 1.0,
+        "taxa_sem_leitura": 0.0
+      },
+      "UFPR04": {
+        "vagas_avaliadas": 781,
+        "matriz": {
+          "vo_po": 464,
+          "vo_pl": 0,
+          "vl_po": 0,
+          "vl_pl": 317,
+          "sem_leitura": 0
+        },
+        "acuracia": 1.0,
+        "acuracia_sobre_todas": 1.0,
+        "falso_livre": 0.0,
+        "falso_ocupado": 0.0,
+        "precisao_ocupada": 1.0,
+        "revocacao_ocupada": 1.0,
+        "taxa_sem_leitura": 0.0
+      }
+    },
+    "configuracao": "Vagas, treinado no PKLot",
+    "detalhe": "YOLO11n ajustado em 971 imagens, 2 classes"
+  },
+  "Vagas, treinado no PKLot | teste": {
+    "conjunto": "teste",
+    "modo": "vagas",
+    "pesos": "modelos/vagas.pt",
+    "janelas": "quadro inteiro",
+    "tamanho": 1280,
+    "confianca": 0.25,
+    "limiar_cobertura": null,
+    "fotos": 60,
+    "fotos_descartadas": 0,
+    "segundos": 2.4,
+    "ms_por_quadro": 25.3,
+    "quadros_por_segundo": 39.53,
+    "geral": {
+      "vagas_avaliadas": 2399,
+      "matriz": {
+        "vo_po": 424,
+        "vo_pl": 0,
+        "vl_po": 3,
+        "vl_pl": 189,
+        "sem_leitura": 1783
+      },
+      "acuracia": 0.9951,
+      "acuracia_sobre_todas": 0.2555,
+      "falso_livre": 0.0,
+      "falso_ocupado": 0.0156,
+      "precisao_ocupada": 0.993,
+      "revocacao_ocupada": 1.0,
+      "taxa_sem_leitura": 0.7432
+    },
+    "grupos": {
+      "Cloudy": {
+        "vagas_avaliadas": 760,
+        "matriz": {
+          "vo_po": 83,
+          "vo_pl": 0,
+          "vl_po": 1,
+          "vl_pl": 94,
+          "sem_leitura": 582
+        },
+        "acuracia": 0.9944,
+        "acuracia_sobre_todas": 0.2329,
+        "falso_livre": 0.0,
+        "falso_ocupado": 0.0105,
+        "precisao_ocupada": 0.9881,
+        "revocacao_ocupada": 1.0,
+        "taxa_sem_leitura": 0.7658
+      },
+      "Rainy": {
+        "vagas_avaliadas": 319,
+        "matriz": {
+          "vo_po": 48,
+          "vo_pl": 0,
+          "vl_po": 0,
+          "vl_pl": 20,
+          "sem_leitura": 251
+        },
+        "acuracia": 1.0,
+        "acuracia_sobre_todas": 0.2132,
+        "falso_livre": 0.0,
+        "falso_ocupado": 0.0,
+        "precisao_ocupada": 1.0,
+        "revocacao_ocupada": 1.0,
+        "taxa_sem_leitura": 0.7868
+      },
+      "Sunny": {
+        "vagas_avaliadas": 1320,
+        "matriz": {
+          "vo_po": 293,
+          "vo_pl": 0,
+          "vl_po": 2,
+          "vl_pl": 75,
+          "sem_leitura": 950
+        },
+        "acuracia": 0.9946,
+        "acuracia_sobre_todas": 0.2788,
+        "falso_livre": 0.0,
+        "falso_ocupado": 0.026,
+        "precisao_ocupada": 0.9932,
+        "revocacao_ocupada": 1.0,
+        "taxa_sem_leitura": 0.7197
+      },
+      "UFPR05": {
+        "vagas_avaliadas": 2399,
+        "matriz": {
+          "vo_po": 424,
+          "vo_pl": 0,
+          "vl_po": 3,
+          "vl_pl": 189,
+          "sem_leitura": 1783
+        },
+        "acuracia": 0.9951,
+        "acuracia_sobre_todas": 0.2555,
+        "falso_livre": 0.0,
+        "falso_ocupado": 0.0156,
+        "precisao_ocupada": 0.993,
+        "revocacao_ocupada": 1.0,
+        "taxa_sem_leitura": 0.7432
+      }
+    },
+    "configuracao": "Vagas, treinado no PKLot",
+    "detalhe": "YOLO11n ajustado em 971 imagens, 2 classes"
+  }
+}

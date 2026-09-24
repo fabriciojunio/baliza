@@ -7,17 +7,9 @@ htmlcov/
 
 # A base bruta tem 5 GB e e publica: quem quiser reproduz com um comando.
 dados/
+# Saida de treino: pesa centenas de megabytes e o que interessa dela
+# (pesos e graficos) e copiado para modelos/ e docs/treino/.
 runs/
-resultados/*.json
-!resultados/.gitkeep
-
-# Pesos treinados vao por release, nao pelo repositorio.
-modelos/*.pt
-
-# O pacote de demonstracao e gerado por treino/montar_demo.py.
-demo/patios/
-demo/anotado/
-demo/historico/
 
 # Metadados gerados pelo pip install -e
 src/*.egg-info/

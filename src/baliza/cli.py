@@ -173,9 +173,14 @@ def construir_parser() -> argparse.ArgumentParser:
 
 def main(argv: list[str] | None = None) -> int:
     parser = construir_parser()
+    # None significa "le a linha de comando de verdade", e lista vazia
+    # significa "nao veio argumento nenhum". Tratar os dois como a mesma coisa
+    # fazia o programa ignorar tudo o que o usuario digitou.
+    if argv is None:
+        argv = sys.argv[1:]
     # Sem argumento nenhum o programa cai na demonstracao, que e o que quem
     # abriu por engano quer ver. Com argumento errado, o argparse reclama.
-    args = parser.parse_args(argv if argv else ["demonstracao"])
+    args = parser.parse_args(argv or ["demonstracao"])
     return args.funcao(args)
 
 

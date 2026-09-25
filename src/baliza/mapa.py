@@ -18,7 +18,7 @@ class MapaInvalido(ValueError):
 
 class Mapa:
     def __init__(self, camera: str, vagas: list[Vaga], largura: int = 0, altura: int = 0,
-                 detector: str | None = None):
+                 detector: str | None = None, pesos: str | None = None):
         if not vagas:
             raise MapaInvalido("mapa sem vaga nenhuma")
         vistos = set()
@@ -39,6 +39,9 @@ class Mapa:
         # precisa do detector geral. Sem isso a demonstração abre no detector
         # errado e mostra vaga ocupada pintada de verde.
         self.detector = detector
+        # E qual arquivo de pesos. Um modelo so serve as cameras que ele viu em
+        # treino, entao a camera aponta para o modelo que a conhece.
+        self.pesos = pesos
 
     def __len__(self) -> int:
         return len(self.vagas)
@@ -60,6 +63,7 @@ class Mapa:
             "largura": self.largura,
             "altura": self.altura,
             "detector_recomendado": self.detector,
+            "pesos_recomendados": self.pesos,
             "vagas": [
                 {
                     "id": vaga.id,
@@ -97,6 +101,7 @@ class Mapa:
             largura=int(dados.get("largura", 0)),
             altura=int(dados.get("altura", 0)),
             detector=dados.get("detector_recomendado"),
+            pesos=dados.get("pesos_recomendados"),
         )
 
     @classmethod
@@ -135,4 +140,4 @@ def dividir_em_setores(mapa: Mapa, colunas: int = 2) -> Mapa:
                 setor = nome
                 break
         novas.append(Vaga(id=vaga.id, contorno=vaga.contorno, setor=setor))
-    return Mapa(mapa.camera, novas, mapa.largura, mapa.altura, mapa.detector)
+    return Mapa(mapa.camera, novas, mapa.largura, mapa.altura, mapa.detector, mapa.pesos)

@@ -33,7 +33,10 @@ def _resolver_detector(escolhido: str | None, pesos: str | None, mapa) -> tuple[
         modo, motivo = "veiculos", "padrao"
 
     if modo == "vagas":
-        caminho = Path(pesos) if pesos else MODELOS / "vagas.pt"
+        sugeridos = getattr(mapa, "pesos", None) if not escolhido else None
+        caminho = Path(pesos or sugeridos or MODELOS / "vagas.pt")
+        if not caminho.is_absolute():
+            caminho = RAIZ / caminho if not caminho.exists() else caminho
         if not caminho.exists():
             return ("veiculos", str(MODELOS / "yolo11n.pt"),
                     f"{caminho.name} nao esta em disco, usando o detector geral")

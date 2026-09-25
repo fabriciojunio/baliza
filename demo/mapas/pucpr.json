@@ -2,6 +2,8 @@
   "camera": "PUCPR",
   "largura": 1280,
   "altura": 720,
+  "detector_recomendado": "vagas",
+  "pesos_recomendados": "modelos/vagas-experimento.pt",
   "vagas": [
     {
       "id": "1",

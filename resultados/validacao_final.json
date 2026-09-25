@@ -1,0 +1,283 @@
+{
+  "demo": {
+    "ufpr04": {
+      "veiculos": {
+        "vagas": 2708,
+        "acuracia": 0.9878,
+        "falso_livre": 0.0063,
+        "falso_ocupado": 0.0304,
+        "sem_leitura": 0.0
+      },
+      "veiculos-janelas": {
+        "vagas": 2708,
+        "acuracia": 0.9871,
+        "falso_livre": 0.0068,
+        "falso_ocupado": 0.0319,
+        "sem_leitura": 0.0
+      },
+      "vagas-experimento": {
+        "vagas": 2708,
+        "acuracia": 0.9989,
+        "falso_livre": 0.0015,
+        "falso_ocupado": 0.0,
+        "sem_leitura": 0.0
+      },
+      "vagas": {
+        "vagas": 2708,
+        "acuracia": 0.9974,
+        "falso_livre": 0.0024,
+        "falso_ocupado": 0.0,
+        "sem_leitura": 0.0007
+      }
+    },
+    "ufpr05": {
+      "veiculos": {
+        "vagas": 4129,
+        "acuracia": 0.9792,
+        "falso_livre": 0.0238,
+        "falso_ocupado": 0.0018,
+        "sem_leitura": 0.0
+      },
+      "veiculos-janelas": {
+        "vagas": 4129,
+        "acuracia": 0.9952,
+        "falso_livre": 0.0045,
+        "falso_ocupado": 0.0073,
+        "sem_leitura": 0.0
+      },
+      "vagas-experimento": {
+        "vagas": 4129,
+        "acuracia": 0.286,
+        "falso_livre": 0.0,
+        "falso_ocupado": 0.0127,
+        "sem_leitura": 0.7123
+      },
+      "vagas": {
+        "vagas": 4129,
+        "acuracia": 1.0,
+        "falso_livre": 0.0,
+        "falso_ocupado": 0.0,
+        "sem_leitura": 0.0
+      }
+    },
+    "pucpr": {
+      "veiculos": {
+        "vagas": 16093,
+        "acuracia": 0.4354,
+        "falso_livre": 0.8148,
+        "falso_ocupado": 0.0072,
+        "sem_leitura": 0.0
+      },
+      "veiculos-janelas": {
+        "vagas": 16093,
+        "acuracia": 0.7901,
+        "falso_livre": 0.2995,
+        "falso_ocupado": 0.0104,
+        "sem_leitura": 0.0
+      },
+      "vagas-experimento": {
+        "vagas": 16093,
+        "acuracia": 0.9805,
+        "falso_livre": 0.0004,
+        "falso_ocupado": 0.0,
+        "sem_leitura": 0.0193
+      },
+      "vagas": {
+        "vagas": 16093,
+        "acuracia": 0.6632,
+        "falso_livre": 0.0,
+        "falso_ocupado": 0.0006,
+        "sem_leitura": 0.3366
+      }
+    }
+  },
+  "fotos": {
+    "ufpr04": {
+      "veiculos": {
+        "vagas": 83,
+        "acuracia": 1.0,
+        "falso_livre": 0.0,
+        "falso_ocupado": 0.0,
+        "sem_leitura": 0.0
+      },
+      "veiculos-janelas": {
+        "vagas": 83,
+        "acuracia": 1.0,
+        "falso_livre": 0.0,
+        "falso_ocupado": 0.0,
+        "sem_leitura": 0.0
+      },
+      "vagas-experimento": {
+        "vagas": 83,
+        "acuracia": 1.0,
+        "falso_livre": 0.0,
+        "falso_ocupado": 0.0,
+        "sem_leitura": 0.0
+      },
+      "vagas": {
+        "vagas": 83,
+        "acuracia": 1.0,
+        "falso_livre": 0.0,
+        "falso_ocupado": 0.0,
+        "sem_leitura": 0.0
+      }
+    },
+    "ufpr05": {
+      "veiculos": {
+        "vagas": 120,
+        "acuracia": 0.9833,
+        "falso_livre": 0.0253,
+        "falso_ocupado": 0.0,
+        "sem_leitura": 0.0
+      },
+      "veiculos-janelas": {
+        "vagas": 120,
+        "acuracia": 1.0,
+        "falso_livre": 0.0,
+        "falso_ocupado": 0.0,
+        "sem_leitura": 0.0
+      },
+      "vagas-experimento": {
+        "vagas": 120,
+        "acuracia": 0.2583,
+        "falso_livre": 0.0,
+        "falso_ocupado": 0.0,
+        "sem_leitura": 0.7417
+      },
+      "vagas": {
+        "vagas": 120,
+        "acuracia": 1.0,
+        "falso_livre": 0.0,
+        "falso_ocupado": 0.0,
+        "sem_leitura": 0.0
+      }
+    },
+    "pucpr": {
+      "veiculos": {
+        "vagas": 300,
+        "acuracia": 0.6533,
+        "falso_livre": 0.7482,
+        "falso_ocupado": 0.0,
+        "sem_leitura": 0.0
+      },
+      "veiculos-janelas": {
+        "vagas": 300,
+        "acuracia": 0.8767,
+        "falso_livre": 0.259,
+        "falso_ocupado": 0.0062,
+        "sem_leitura": 0.0
+      },
+      "vagas-experimento": {
+        "vagas": 300,
+        "acuracia": 1.0,
+        "falso_livre": 0.0,
+        "falso_ocupado": 0.0,
+        "sem_leitura": 0.0
+      },
+      "vagas": {
+        "vagas": 300,
+        "acuracia": 0.8433,
+        "falso_livre": 0.0,
+        "falso_ocupado": 0.0,
+        "sem_leitura": 0.1567
+      }
+    }
+  },
+  "base": {
+    "PUCPR": {
+      "veiculos": {
+        "vagas": 3803,
+        "acuracia": 0.5619,
+        "falso_livre": 0.8222,
+        "falso_ocupado": 0.0111,
+        "sem_leitura": 0.0
+      },
+      "veiculos-janelas": {
+        "vagas": 3803,
+        "acuracia": 0.8112,
+        "falso_livre": 0.3487,
+        "falso_ocupado": 0.0111,
+        "sem_leitura": 0.0
+      },
+      "vagas-experimento": {
+        "vagas": 3803,
+        "acuracia": 0.9995,
+        "falso_livre": 0.0005,
+        "falso_ocupado": 0.0,
+        "sem_leitura": 0.0003
+      },
+      "vagas": {
+        "vagas": 3803,
+        "acuracia": 0.9445,
+        "falso_livre": 0.0005,
+        "falso_ocupado": 0.0006,
+        "sem_leitura": 0.055
+      }
+    },
+    "UFPR04": {
+      "veiculos": {
+        "vagas": 1060,
+        "acuracia": 0.9849,
+        "falso_livre": 0.0169,
+        "falso_ocupado": 0.0123,
+        "sem_leitura": 0.0
+      },
+      "veiculos-janelas": {
+        "vagas": 1060,
+        "acuracia": 0.9887,
+        "falso_livre": 0.0123,
+        "falso_ocupado": 0.0098,
+        "sem_leitura": 0.0
+      },
+      "vagas-experimento": {
+        "vagas": 1060,
+        "acuracia": 1.0,
+        "falso_livre": 0.0,
+        "falso_ocupado": 0.0,
+        "sem_leitura": 0.0
+      },
+      "vagas": {
+        "vagas": 1060,
+        "acuracia": 0.9981,
+        "falso_livre": 0.0015,
+        "falso_ocupado": 0.0025,
+        "sem_leitura": 0.0
+      }
+    },
+    "UFPR05": {
+      "veiculos": {
+        "vagas": 1596,
+        "acuracia": 0.985,
+        "falso_livre": 0.0193,
+        "falso_ocupado": 0.0059,
+        "sem_leitura": 0.0
+      },
+      "veiculos-janelas": {
+        "vagas": 1596,
+        "acuracia": 0.9937,
+        "falso_livre": 0.0037,
+        "falso_ocupado": 0.0118,
+        "sem_leitura": 0.0
+      },
+      "vagas-experimento": {
+        "vagas": 1596,
+        "acuracia": 0.2694,
+        "falso_livre": 0.0,
+        "falso_ocupado": 0.0039,
+        "sem_leitura": 0.7293
+      },
+      "vagas": {
+        "vagas": 1596,
+        "acuracia": 0.9994,
+        "falso_livre": 0.0,
+        "falso_ocupado": 0.002,
+        "sem_leitura": 0.0
+      }
+    }
+  },
+  "recomendacao": {
+    "ufpr04": "vagas",
+    "ufpr05": "vagas",
+    "pucpr": "vagas"
+  }
+}

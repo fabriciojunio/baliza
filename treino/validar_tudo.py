@@ -106,6 +106,8 @@ def main() -> int:
     parser.add_argument("--amostra-base", type=int, default=40,
                         help="fotos por camera na frente 'base'")
     parser.add_argument("--saida", default="resultados/validacao_final.json")
+    parser.add_argument("--gravar", action="store_true",
+                        help="grava no mapa de cada camera o detector e os pesos medidos")
     args = parser.parse_args()
 
     modelos = disponiveis()
@@ -166,6 +168,20 @@ def main() -> int:
     saida["recomendacao"] = recomendacao
     Path(args.saida).write_text(json.dumps(saida, indent=2, ensure_ascii=False),
                                 encoding="utf-8")
+
+    if args.gravar:
+        print("\ngravando a recomendação em cada mapa:")
+        for apelido, por_modelo in saida["demo"].items():
+            escolhido = max(por_modelo.items(), key=lambda kv: kv[1]["acuracia"] or 0)[0]
+            modo, pesos, _ = MODELOS[escolhido]
+            caminho = Path(f"demo/mapas/{apelido}.json")
+            mapa = Mapa.carregar(caminho)
+            mapa.detector = modo
+            mapa.pesos = pesos if modo == "vagas" else None
+            mapa.salvar(caminho)
+            detalhe = f", pesos {Path(pesos).name}" if modo == "vagas" else ""
+            print(f"  {caminho}: detector {modo}{detalhe}")
+
     print(f"\n{args.saida}")
     return 0
 

@@ -18,6 +18,7 @@ from pathlib import Path
 
 import cv2
 
+import divisao
 from baliza import pklot
 from baliza.mapa import dividir_em_setores
 from baliza.tipos import Estado
@@ -49,15 +50,22 @@ def _variacao(fotos: list[pklot.Foto], amostras: int = 12) -> float:
 
 
 def escolher_dia(raiz: str, estacionamento: str, clima: str) -> list[pklot.Foto]:
-    """O dia em que o patio mais encheu e esvaziou.
+    """O dia em que o patio mais encheu e esvaziou, entre os dias fora do treino.
 
     A primeira versão escolhia o dia com mais fotos, e caiu num 23 de dezembro
     com o estacionamento vazio do comeco ao fim: 156 quadros em que nada
     acontece. O que rende demonstração e variação de ocupação, não duração.
+
+    A segunda versão escolhia entre todos os dias, e caiu num dia par em duas
+    das três câmeras. Dia par é treino (`divisao.py`), então a demonstração
+    media a memória do modelo e não o acerto dele: era o número bonito que não
+    prova nada. Aqui só entram dias ímpares, que nenhum dos dois modelos viu.
     """
     fotos = pklot.listar_fotos(raiz, estacionamentos=(estacionamento,), climas=(clima,))
     por_dia: dict[str, list[pklot.Foto]] = {}
     for foto in fotos:
+        if divisao.dia_par(foto):
+            continue
         por_dia.setdefault(foto.dia, []).append(foto)
     if not por_dia:
         return []
@@ -132,6 +140,7 @@ def parte_videos(raiz: str) -> dict:
             "estacionamento": estacionamento,
             "clima": clima,
             "dia": fotos[0].dia,
+            "dia_no_treino": divisao.dia_par(fotos[0]),
             "vagas": len(mapa),
             "setores": mapa.setores,
             "quadros_no_video": quadros,
@@ -180,6 +189,10 @@ def parte_anotado(pesos: str | None, modo: str, tamanho: int, janelas,
             relatorio[apelido + sufixo] = {
                 "quadros": len(resultados),
                 "vagas": len(mapa),
+                # Qual detector gerou esta curva. O painel le daqui para nao
+                # abrir mostrando a curva de um detector com o outro marcado.
+                "detector": modo,
+                "pesos": Path(pesos).name if (pesos and modo == "vagas") else None,
                 "ms_por_quadro": round(
                     sum(r.ms_inferencia for r in resultados) / len(resultados), 1
                 ),

@@ -17,3 +17,7 @@ src/*.egg-info/
 # O painel grava a execucao dele num banco proprio, apagado e refeito a cada
 # clique em Processar. Um deles foi parar no repositorio sem querer.
 demo/historico/*_painel.db
+
+# O ultralytics baixa o yolo11n na pasta de onde o comando roda. O do projeto
+# vive em modelos/, e essa copia da raiz e byte a byte a mesma coisa.
+/yolo11n.pt

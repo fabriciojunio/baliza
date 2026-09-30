@@ -88,7 +88,9 @@ def test_modelo_de_verdade_acha_carro_no_patio():
     import cv2
     from pathlib import Path
 
-    foto = next(Path("demo/fotos").glob("ufpr04_*.jpg"), None)
+    # rglob, e nao glob: as fotos ficam em demo/fotos/<apelido>/, separadas por
+    # camera. Com glob simples este teste passou meses pulando calado.
+    foto = next(Path("demo/fotos").rglob("ufpr04_*.jpg"), None)
     if foto is None:
         pytest.skip("pacote de demonstracao nao montado")
     detector = DetectorVeiculos("modelos/yolo11n.pt", tamanho=1280)

@@ -41,10 +41,15 @@ falhar.
 
 São dois arquivos de pesos, e a diferença entre eles importa:
 
-| Arquivo | Treinado com | Para quê |
+| Arquivo | Treinado com | Onde roda |
 |---|---|---|
-| `modelos/vagas.pt` | as três câmeras | é o que roda na demonstração |
-| `modelos/vagas-experimento.pt` | só PUCPR e UFPR04 | responde "quanto se perde numa câmera nunca vista" |
+| `modelos/vagas-experimento.pt` | só PUCPR e UFPR04 | UFPR04 e PUCPR na demonstração, e é o que responde "quanto se perde numa câmera nunca vista" |
+| `modelos/vagas.pt` | as três câmeras | UFPR05 na demonstração, que é a câmera que o outro nunca viu |
+
+Quem escolhe não é o gosto: cada mapa guarda o arquivo que mediu melhor
+*naquela* câmera, e o programa imprime qual carregou ao iniciar. Na UFPR05 o
+de três câmeras marca 100,0% contra 32,8% do outro; na PUCPR a ordem inverte,
+98,0% contra 66,3%, porque o de três câmeras treinou 18 épocas e o outro 30.
 
 A diferença entre os dois está medida em [docs/RESULTADOS.md](docs/RESULTADOS.md),
 com número por estacionamento e por clima. O resumo:
@@ -62,6 +67,29 @@ não aprendeu a reconhecer vaga, aprendeu a geometria daqueles dois pátios. Em
 oito fotos da câmera nunca vista ele devolveu 112 detecções para 319 vagas,
 com IoU mediana de 0,05 contra o contorno verdadeiro. Por isso o padrão do
 sistema é o detector de veículos, e não o treinado.
+
+## O pacote de demonstração
+
+Os três vídeos de `demo/patios/` são um dia inteiro de cada câmera, montado a
+partir das fotos de cinco em cinco minutos do PKLot. Junto vêm os mapas, três
+fotos avulsas por câmera e os vídeos já anotados em `demo/anotado/`.
+
+| Câmera | Dia | Vagas | Quadros | Acurácia no dia |
+|---|---|---|---|---|
+| UFPR04 | 17/01/2013 | 28 | 123 | 99,9% |
+| UFPR05 | 13/03/2013 | 40 | 83 | 100,0% |
+| PUCPR | 29/10/2012 | 100 | 161 | 98,0% |
+
+**Os três dias são ímpares de propósito.** Dia par é treino em
+`treino/divisao.py`, então demonstrar num dia par mediria a memória do modelo e
+não o acerto dele. `resultados/validacao_final.json` registra o dia de cada
+câmera e um campo `dia_no_treino` para poder conferir isso sem acreditar no
+texto.
+
+Uma ressalva medida, para não inflar o número: o XML do PKLot às vezes deixa de
+anotar uma vaga num quadro, e leitura sem gabarito não entra na conta. Isso
+atinge 0,99% dos pares na UFPR04 e 0,04% nas outras duas, e está registrado em
+`sem_gabarito` no mesmo arquivo.
 
 ## O mapa de vagas
 

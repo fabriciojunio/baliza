@@ -45,6 +45,36 @@ mora a história deste projeto.
 | Veículos, janelas 3x2 | 99.2% | 99.6% | 98.8% |
 | Vagas, treinado no PKLot | 27.9% | 23.3% | 21.3% |
 
+## O segundo modelo, o que roda na demonstração
+
+As tabelas acima são do `vagas-experimento.pt`, treinado só em PUCPR e UFPR04,
+que é o modelo que responde à pergunta científica. Existe um segundo,
+`vagas.pt`, treinado nas três câmeras em 18 épocas, e ele existe por um motivo
+prático: numa câmera nunca vista o primeiro não serve, e a demonstração precisa
+funcionar nas três.
+
+Medidos nos dias de demonstração, todos ímpares e portanto fora do treino
+(`resultados/validacao_final.json`):
+
+| Câmera | `vagas-experimento.pt` | `vagas.pt` | Usa |
+|---|---|---|---|
+| UFPR04 | 99,9% | 99,9% | experimento |
+| UFPR05 | 32,8% | 100,0% | vagas |
+| PUCPR | 98,0% | 66,3% | experimento |
+
+A PUCPR é o caso interessante: o modelo que viu **mais** câmeras vai **pior**
+nela, porque treinou 18 épocas contra 30 do outro. Mais dado não compensa treino
+mais curto, e por isso a escolha é por câmera e medida, não por intuição.
+
+Duas limitações honestas destes números:
+
+- Para o `vagas.pt`, os dias ímpares serviram de validação durante o treino, o
+  que escolhe a época gravada. Não treinou peso neles, mas também não é um
+  conjunto de teste virgem, e chamar de teste seria exagero.
+- O XML do PKLot às vezes deixa de anotar uma vaga num quadro, e leitura sem
+  gabarito não entra no denominador. São 0,99% dos pares na UFPR04 e 0,04% nas
+  outras duas, registrados no campo `sem_gabarito`.
+
 ## Como reproduzir
 
 ```

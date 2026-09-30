@@ -6,7 +6,9 @@ Três frentes, e cada uma responde uma pergunta diferente:
 
   demo    os três vídeos da pasta demo, quadro a quadro, contra o rótulo
           verdadeiro da foto que gerou aquele quadro. É o que o professor vai
-          ver na tela, então é o que precisa estar certo.
+          ver na tela, então é o que precisa estar certo. Os três dias são
+          ímpares, fora do treino de qualquer um dos modelos, e o JSON registra
+          isso em "dias" para poder conferir.
   fotos   as nove fotos avulsas, uma a uma, com o número exato de cada uma.
   base    uma amostra dos dias que nenhum modelo usou em treino, nas três
           câmeras e nos três climas.
@@ -46,12 +48,16 @@ def disponiveis() -> dict[str, tuple]:
 class Placar:
     def __init__(self):
         self.certas = self.total = self.falso_livre = self.falso_ocupado = 0
-        self.ocupadas = self.livres = self.sem_leitura = 0
+        self.ocupadas = self.livres = self.sem_leitura = self.sem_gabarito = 0
 
     def somar(self, leituras, verdade):
         for l in leituras:
             real = verdade.get(l.vaga_id)
             if real is None:
+                # O XML do PKLot as vezes deixa de anotar uma vaga num quadro.
+                # Essa leitura nao entra na conta, e por isso ela e contada
+                # aqui: acuracia sobre denominador que encolhe calado nao vale.
+                self.sem_gabarito += 1
                 continue
             self.total += 1
             if real is Estado.OCUPADA:
@@ -76,6 +82,9 @@ class Placar:
             "falso_livre": taxa(self.falso_livre, self.ocupadas),
             "falso_ocupado": taxa(self.falso_ocupado, self.livres),
             "sem_leitura": taxa(self.sem_leitura, self.total),
+            "sem_gabarito": self.sem_gabarito,
+            "sem_gabarito_taxa": taxa(self.sem_gabarito,
+                                      self.total + self.sem_gabarito),
         }
 
 
@@ -112,12 +121,26 @@ def main() -> int:
 
     modelos = disponiveis()
     print("modelos encontrados:", ", ".join(modelos) or "nenhum")
-    saida: dict = {"demo": {}, "fotos": {}, "base": {}}
+    saida: dict = {"dias": {}, "demo": {}, "fotos": {}, "base": {}}
 
     # --- os tres videos da demonstracao, quadro a quadro ---
     dias = {}
     for apelido, (estacionamento, clima) in montar_demo.DIAS.items():
-        dias[apelido] = montar_demo.escolher_dia(args.raiz, estacionamento, clima)
+        fotos = montar_demo.escolher_dia(args.raiz, estacionamento, clima)
+        dias[apelido] = fotos
+        if not fotos:
+            continue
+        saida["dias"][apelido] = {
+            "estacionamento": estacionamento,
+            "clima": clima,
+            "dia": fotos[0].dia,
+            "fotos": len(fotos),
+            # Dia par e treino em divisao.py. Se isto vier True, a acuracia
+            # medida abaixo mede a memoria do modelo e nao serve de evidencia.
+            "dia_no_treino": divisao.dia_par(fotos[0]),
+        }
+        print(f"  dia {apelido:7s} {fotos[0].dia}  {len(fotos):3d} fotos"
+              f"  no treino: {divisao.dia_par(fotos[0])}", flush=True)
 
     for nome, (modo, pesos, janelas) in modelos.items():
         detector = abrir_detector(modo, pesos, tamanho=1280, janelas=janelas)
@@ -162,9 +185,18 @@ def main() -> int:
     recomendacao = {}
     for apelido, por_modelo in saida["demo"].items():
         melhor = max(por_modelo.items(), key=lambda kv: kv[1]["acuracia"] or 0)
-        modo = MODELOS[melhor[0]][0]
-        recomendacao[apelido] = modo
-        print(f"  {apelido:7s} {melhor[0]:18s} {melhor[1]['acuracia']*100:.1f}%  -> {modo}")
+        modo, pesos, _ = MODELOS[melhor[0]]
+        # Guardar o modo sozinho nao bastava: "vagas" e ao mesmo tempo o nome do
+        # modo e o nome de um dos dois arquivos de pesos, e quem lia o JSON nao
+        # sabia se a camera roda vagas.pt ou vagas-experimento.pt.
+        recomendacao[apelido] = {
+            "modelo": melhor[0],
+            "detector": modo,
+            "pesos": pesos if modo == "vagas" else None,
+            "acuracia": melhor[1]["acuracia"],
+        }
+        print(f"  {apelido:7s} {melhor[0]:18s} {melhor[1]['acuracia']*100:.1f}%"
+              f"  -> {modo}, {Path(pesos).name}")
     saida["recomendacao"] = recomendacao
     Path(args.saida).write_text(json.dumps(saida, indent=2, ensure_ascii=False),
                                 encoding="utf-8")

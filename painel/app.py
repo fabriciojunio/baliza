@@ -9,6 +9,7 @@ aqui dentro.
 
 from __future__ import annotations
 
+import json
 import sys
 import tempfile
 from pathlib import Path
@@ -28,6 +29,7 @@ from baliza.registro import Registro  # noqa: E402
 from baliza.sistema import Baliza  # noqa: E402
 
 DEMO = RAIZ / "demo"
+# Pesos treinados de reserva, para mapa antigo que ainda não guarda os seus.
 PESOS_TREINADOS = RAIZ / "modelos" / "vagas.pt"
 
 st.set_page_config(page_title="Baliza", page_icon="P", layout="wide")
@@ -43,6 +45,31 @@ def carregar_sistema(caminho_mapa: str, modo: str, pesos: str | None,
     mapa = Mapa.carregar(caminho_mapa)
     detector = abrir_detector(modo, pesos, tamanho=tamanho, janelas=grade)
     return Baliza(mapa, detector, limiar=limiar)
+
+
+def _historico_do_modo(apelido: str, modo: str) -> Path | None:
+    """O banco gravado por aquele detector naquela câmera, se existir.
+
+    `demo/relatorio.json` guarda, para cada vídeo anotado, com que detector ele
+    foi gerado. Sem essa consulta o painel escolhia pelo nome do arquivo e
+    acertava por sorte em duas câmeras e errava na terceira.
+    """
+    relatorio = DEMO / "relatorio.json"
+    if not relatorio.exists():
+        return None
+    try:
+        anotado = json.loads(relatorio.read_text(encoding="utf-8")).get("anotado", {})
+    except (json.JSONDecodeError, OSError):
+        return None
+    for chave, dados in anotado.items():
+        if not (chave == apelido or chave.startswith(apelido + "_")):
+            continue
+        if dados.get("detector") != modo:
+            continue
+        banco = DEMO / "historico" / f"{chave}.db"
+        if banco.exists():
+            return banco
+    return None
 
 
 def cartoes(resultado, mapa) -> None:
@@ -97,20 +124,30 @@ with st.sidebar:
     st.header("Configuração")
     escolhido = st.selectbox("Câmera", mapas, format_func=lambda p: p.stem.upper())
 
-    tem_treinado = PESOS_TREINADOS.exists()
-    opcoes = ["veículos (YOLO11 do COCO, sem treino)"]
-    if tem_treinado:
-        opcoes.insert(0, "vagas (YOLO11 treinado no PKLot)")
     # A opção já abre no detector que funciona naquela câmera, medido e gravado
     # no mapa. Sem isso o painel abre no detector errado e mostra vaga ocupada
     # pintada de verde, que é a pior primeira impressão possível.
-    recomendado = Mapa.carregar(escolhido).detector
+    mapa_escolhido = Mapa.carregar(escolhido)
+    recomendado = mapa_escolhido.detector
+    # E os PESOS têm que sair do mapa também, não de um caminho fixo: são dois
+    # arquivos treinados, e cada câmera tem o seu. Com o caminho fixo, a PUCPR
+    # rodava com o modelo errado e caia de 98,0% para 66,3% bem no slide que
+    # resume o projeto.
+    pesos_do_mapa = RAIZ / (mapa_escolhido.pesos or "") if mapa_escolhido.pesos else None
+    pesos_treinados = pesos_do_mapa if pesos_do_mapa and pesos_do_mapa.exists() else PESOS_TREINADOS
+
+    tem_treinado = pesos_treinados.exists()
+    opcoes = ["veículos (YOLO11 do COCO, sem treino)"]
+    if tem_treinado:
+        opcoes.insert(0, "vagas (YOLO11 treinado no PKLot)")
     inicial = 0
-    if recomendado == "veiculos":
+    if recomendado == "veiculos" or not tem_treinado:
         inicial = len(opcoes) - 1
     escolha_modelo = st.radio("Detector", opcoes, index=inicial)
     modo = "vagas" if escolha_modelo.startswith("vagas") else "veiculos"
-    pesos = str(PESOS_TREINADOS) if modo == "vagas" else str(RAIZ / "modelos" / "yolo11n.pt")
+    pesos = str(pesos_treinados) if modo == "vagas" else str(RAIZ / "modelos" / "yolo11n.pt")
+    if modo == "vagas":
+        st.caption(f"Pesos: `{Path(pesos).name}`")
     if recomendado and modo != recomendado:
         st.caption(f"O medido para esta câmera é o detector **{recomendado}**.")
 
@@ -185,7 +222,16 @@ if alvo and st.button("Processar", type="primary"):
     st.success(f"{lidos} quadros processados.")
     curva(banco, mapa.camera)
 else:
-    historico = DEMO / "historico" / f"{escolhido.stem}.db"
-    if historico.exists():
-        st.info("Mostrando o histórico da última execução gravada.")
+    # A curva gravada precisa ter saído do MESMO detector que está marcado ao
+    # lado. Abrir a PUCPR com "vagas" selecionado e mostrar a curva do detector
+    # geral, que para no pico de 38 de 100, é a leitura errada mais fácil de
+    # alguém fazer na sala, e ela deprecia justamente o que funciona.
+    historico = _historico_do_modo(escolhido.stem, modo)
+    if historico is not None:
+        st.info(f"Mostrando o histórico da última execução gravada, "
+                f"feita com o detector **{modo}**. Clique em Processar para "
+                f"rodar agora.")
         curva(historico, mapa.camera)
+    else:
+        st.info("Clique em **Processar** para rodar este detector nesta câmera. "
+                "Não há execução gravada com essa combinação.")

@@ -13,3 +13,7 @@ runs/
 
 # Metadados gerados pelo pip install -e
 src/*.egg-info/
+
+# O painel grava a execucao dele num banco proprio, apagado e refeito a cada
+# clique em Processar. Um deles foi parar no repositorio sem querer.
+demo/historico/*_painel.db

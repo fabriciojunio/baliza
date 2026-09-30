@@ -73,8 +73,12 @@ def _comando_rodar(args) -> int:
         print(f"erro: {erro}", file=sys.stderr)
         return 2
 
-    print(f"camera {mapa.camera}, {len(mapa)} vagas, detector {modo} ({motivo})"
-          f" em {detector.dispositivo}")
+    # O nome do arquivo de pesos entra na linha de proposito: sao dois modelos
+    # treinados, "vagas" e ao mesmo tempo o nome do modo e de um dos arquivos, e
+    # sem isso nao da para saber na aula qual dos dois esta rodando.
+    detalhe = f", pesos {Path(pesos).name}" if modo == "vagas" else ""
+    print(f"camera {mapa.camera}, {len(mapa)} vagas, detector {modo}{detalhe}"
+          f" ({motivo}) em {detector.dispositivo}")
     if args.mostrar:
         print("espaco pausa, q encerra")
 
@@ -150,7 +154,8 @@ def _comando_demonstracao(args) -> int:
     alvo = str(video) if video.exists() else str(pasta / "patios" / caminho_mapa.stem)
 
     modo, pesos, motivo = _resolver_detector(args.detector, args.pesos, mapa)
-    print(f"detector {modo} ({motivo})")
+    detalhe = f", pesos {Path(pesos).name}" if modo == "vagas" else ""
+    print(f"detector {modo}{detalhe} ({motivo})")
     detector = abrir_detector(modo, pesos, tamanho=args.tamanho)
     sistema = Baliza(mapa, detector)
     resultados = sistema.rodar(abrir_fonte(alvo), mostrar=not args.sem_janela)

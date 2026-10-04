@@ -18,7 +18,7 @@ streamlit run painel/app.py                           # painel no navegador
 Uma janela abre mostrando o pátio com cada vaga contornada, verde para livre
 e vermelho para ocupada, e o placar no alto. Espaço pausa, `q` encerra.
 
-## Os dois detectores, e por que existem dois
+## Os três detectores, e por que existem três
 
 O sistema decide a ocupação de duas maneiras diferentes, e a escolha muda o
 que o programa precisa saber de antemão.
@@ -33,6 +33,15 @@ nenhum, e é o caminho para quem só quer apontar a câmera e ver.
 PKLot e procura a vaga em si, já classificada. Custa um treino, e em troca
 enxerga o que o primeiro não enxerga: pátio grande fotografado de longe, onde
 o carro tem vinte pixels e o detector geral simplesmente não o vê.
+
+**Detector clássico** (`--detector classico`). Processamento digital de
+imagens, sem rede neural e sem peso treinado: recorta o polígono da vaga,
+normaliza a iluminação, mede borda, textura e entropia, e decide por um limiar
+calibrado. Existe porque o professor pediu que o problema fosse resolvido com
+PDI e que biblioteca pronta de detecção entrasse só em último caso. Numa câmera
+nunca vista faz 86,5% contra 97,5% do YOLO, e roda 155 vezes mais rápido na
+CPU. A medição inteira, com o que ele ganha e o que ele perde, está em
+[docs/DETECTOR-CLASSICO.md](docs/DETECTOR-CLASSICO.md).
 
 Não é preciso escolher: cada mapa de vagas guarda qual detector funciona
 naquela câmera, medido e não chutado, e o programa avisa qual escolheu. Se os

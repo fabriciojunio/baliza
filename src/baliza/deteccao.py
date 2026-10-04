@@ -231,4 +231,16 @@ def abrir_detector(
         if pesos is None:
             raise ValueError("o modo vagas exige os pesos treinados (--pesos)")
         return DetectorVagas(pesos, confianca, tamanho, dispositivo)
+    if modo == "classico":
+        # Caminho sem rede neural: processamento digital de imagens sobre o
+        # recorte de cada vaga. Nao carrega peso nenhum e roda em CPU.
+        from .pdi import Calibracao, DetectorClassico
+
+        cal = None
+        caminho = Path(pesos) if pesos else Path("resultados/pdi_calibracao.json")
+        if caminho.exists():
+            import json
+
+            cal = Calibracao.de_dict(json.loads(caminho.read_text(encoding="utf-8")))
+        return DetectorClassico(cal)
     raise ValueError(f"modo de deteccao desconhecido: {modo}")

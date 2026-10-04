@@ -21,3 +21,8 @@ demo/historico/*_painel.db
 # O ultralytics baixa o yolo11n na pasta de onde o comando roda. O do projeto
 # vive em modelos/, e essa copia da raiz e byte a byte a mesma coisa.
 /yolo11n.pt
+
+# Cache de medidas do detector classico: 4 MB e reproduzivel em um minuto por
+# treino/calibrar_pdi.py. O que o repositorio guarda e a calibracao resultante,
+# que tem quatro constantes e cabe num JSON.
+resultados/pdi_medidas.csv

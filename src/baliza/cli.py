@@ -183,7 +183,7 @@ def construir_parser() -> argparse.ArgumentParser:
     rodar = sub.add_parser("rodar", help="processa video, pasta de fotos, imagem ou camera")
     rodar.add_argument("alvo", help="arquivo, pasta, indice de camera ou URL rtsp")
     rodar.add_argument("--mapa", required=True, help="JSON com o mapa de vagas")
-    rodar.add_argument("--detector", choices=("veiculos", "vagas"), default=None,
+    rodar.add_argument("--detector", choices=("veiculos", "vagas", "classico"), default=None,
                        help="sem isso vale a recomendacao gravada no mapa")
     rodar.add_argument("--pesos", default=None, help="pesos do YOLO")
     rodar.add_argument("--tamanho", type=int, default=1280, help="lado da entrada do modelo")
@@ -214,7 +214,7 @@ def construir_parser() -> argparse.ArgumentParser:
     demo.add_argument("--pasta", default=None)
     demo.add_argument("--escolha", type=int, default=None)
     demo.add_argument("--pesos", default=None)
-    demo.add_argument("--detector", choices=("veiculos", "vagas"), default=None)
+    demo.add_argument("--detector", choices=("veiculos", "vagas", "classico"), default=None)
     demo.add_argument("--tamanho", type=int, default=1280)
     demo.add_argument("--sem-janela", action="store_true")
     demo.set_defaults(funcao=_comando_demonstracao)

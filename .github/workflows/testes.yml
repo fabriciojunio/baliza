@@ -1,0 +1,41 @@
+name: testes
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  testes:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      # O opencv-python traz a interface grafica junto e precisa de bibliotecas
+      # de sistema que o runner nao tem. A versao headless faz o mesmo sem elas,
+      # e e a certa para maquina sem tela.
+      - name: instalar
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+          pip uninstall -y opencv-python
+          pip install "opencv-python-headless>=4.8,<5"
+
+      # Os testes marcados como `lento` rodam o YOLO de verdade sobre imagem do
+      # pacote de demonstracao. Ficam de fora da integracao continua por tempo,
+      # nao por serem dispensaveis: eles rodam na maquina antes de publicar, e o
+      # resultado deles esta em docs/DETECTOR-CLASSICO.md.
+      - name: testes
+        run: pytest tests/ -q -m "not lento"
+
+      # O gate de cobertura trava o build. Ele cobre o codigo do pacote, nao os
+      # scripts de treino, que dependem da base PKLot inteira e nao cabem aqui.
+      - name: cobertura
+        run: pytest tests/ -q -m "not lento" --cov=src/baliza --cov-report=term-missing

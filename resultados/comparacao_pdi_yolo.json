@@ -1,0 +1,37 @@
+{
+  "camera": "UFPR05",
+  "configuracao_yolo": {
+    "pesos": "yolo11n.pt (COCO)",
+    "tamanho": 1280,
+    "confianca": 0.25,
+    "limiar_cobertura": 0.3,
+    "dispositivo": "cpu"
+  },
+  "n_imagens": 60,
+  "n_vagas": 2392,
+  "taxa_de_ocupacao": 0.6174749163879598,
+  "classico": {
+    "acuracia": 0.8653846153846154,
+    "precisao": 0.9940119760479041,
+    "revocacao": 0.7867298578199052,
+    "f1": 0.8783068783068784,
+    "vp": 1162,
+    "fp": 7,
+    "fn": 315,
+    "vn": 908,
+    "ms_por_imagem": 33.96537500060125
+  },
+  "yolo": {
+    "acuracia": 0.9744983277591973,
+    "precisao": 0.9957983193277311,
+    "revocacao": 0.962762356127285,
+    "f1": 0.9790017211703957,
+    "vp": 1422,
+    "fp": 6,
+    "fn": 55,
+    "vn": 909,
+    "ms_por_imagem": 5265.846944998823
+  },
+  "concordancia": 0.8699832775919732,
+  "observacao": "Mesmas imagens para os dois. O classico foi calibrado em PUCPR e UFPR04; o YOLO usa pesos gerais do COCO sem treino no PKLot. Nenhum dos dois viu a UFPR05."
+}

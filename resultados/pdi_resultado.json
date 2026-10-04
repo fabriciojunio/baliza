@@ -1,0 +1,30 @@
+{
+  "normalizacao": "camera",
+  "protocolo": "calibrado em PUCPR+UFPR04, medido em UFPR05, que o detector nunca viu",
+  "n_treino": 21823,
+  "n_teste": 7158,
+  "taxa_de_ocupacao_no_teste": 0.6683431126012853,
+  "medidas_usadas": [
+    "variancia_do_laplaciano",
+    "desvio_do_cinza",
+    "gradiente_medio"
+  ],
+  "acuracia_treino": 0.8412807881773399,
+  "acuracia_teste": 0.8206202849958089,
+  "precisao": 0.9901960784313726,
+  "revocacao": 0.7389214046822743,
+  "f1": 0.846301173090735,
+  "matriz": {
+    "vp": 3535,
+    "fp": 35,
+    "fn": 1249,
+    "vn": 2339
+  },
+  "por_clima": {
+    "Cloudy": 0.833752093802345,
+    "Rainy": 0.7764656263180093,
+    "Sunny": 0.8511879949979158
+  },
+  "acuracia_otsu_por_imagem": 0.5930427493713327,
+  "imagens_degeneradas_no_otsu": 80
+}

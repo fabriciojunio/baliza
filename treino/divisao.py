@@ -16,17 +16,25 @@ Nenhuma foto do mesmo dia e da mesma câmera aparece em dois conjuntos.
 
 from __future__ import annotations
 
+from datetime import date
+
 from baliza.pklot import Foto, listar_fotos
 
 TREINO = ("PUCPR", "UFPR04")
 TESTE = ("UFPR05",)
 
 
+def data_da_foto(foto: Foto) -> date:
+    # A distribuição original contém UFPR05/Sunny/2013-14-16, mas as
+    # fotografias nessa pasta se chamam 2013-04-16_*. Não inventar um dia para
+    # qualquer nome inválido: a exceção conhecida exige o nome da foto.
+    if foto.dia == "2013-14-16" and foto.nome.startswith("2013-04-16_"):
+        return date(2013, 4, 16)
+    return date.fromisoformat(foto.dia)
+
+
 def dia_par(foto: Foto) -> bool:
-    try:
-        return int(foto.dia.split("-")[2]) % 2 == 0
-    except (IndexError, ValueError):
-        return True
+    return data_da_foto(foto).day % 2 == 0
 
 
 def conjunto(
@@ -58,9 +66,12 @@ def conjunto_completo(raiz: str, nome: str, limite_por_dia: int | None = 4) -> l
         return [f for f in fotos if dia_par(f)]
     if nome in ("validacao", "teste"):
         impares = [f for f in fotos if not dia_par(f)]
-        # Metade dos dias ímpares valida durante o treino, a outra metade fica
-        # guardada para medir no fim, sem ter influenciado nenhuma decisão.
-        return impares[::2] if nome == "validacao" else impares[1::2]
+        # A regra depende do dia, nunca do índice da foto: alternar fotos do
+        # mesmo dia colocava quadros quase idênticos na validação e no teste.
+        # Dias 1, 5, 9... validam; 3, 7, 11... ficam para o teste. A atribuição
+        # é estável quando muda a ordem, o clima ou o limite de fotos por dia.
+        resto = 1 if nome == "validacao" else 3
+        return [f for f in impares if data_da_foto(f).day % 4 == resto]
     raise ValueError(f"conjunto desconhecido: {nome}")
 
 

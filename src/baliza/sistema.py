@@ -12,9 +12,10 @@ from .deteccao import DetectorBase, DetectorVagas
 from .desenho import anotar, legenda
 from .mapa import Mapa
 from .ocupacao import LIMIAR_COBERTURA, decidir_por_vaga, decidir_por_veiculo
+from .pdi import DetectorClassico
 from .registro import Registro
 from .suavizacao import Suavizador
-from .tipos import Resultado
+from .tipos import Estado, Leitura, Resultado
 
 
 class Baliza:
@@ -37,14 +38,27 @@ class Baliza:
         return isinstance(self.detector, DetectorVagas)
 
     def processar(self, quadro: np.ndarray, suavizar: bool = True) -> Resultado:
-        deteccoes = self.detector.detectar(quadro)
-        ms = self.detector.ms_ultima_inferencia
-        if self.por_vaga:
-            resultado = decidir_por_vaga(self.mapa, deteccoes, ms_inferencia=ms)
-        else:
-            resultado = decidir_por_veiculo(
-                self.mapa, deteccoes, limiar=self.limiar, ms_inferencia=ms
+        if isinstance(self.detector, DetectorClassico):
+            # A PDI já decide cada polígono. Converter a decisão em caixa e
+            # cruzá-la com as vagas outra vez contamina polígonos vizinhos.
+            ocupadas, _, _ = self.detector.estados(quadro, self.mapa.vagas)
+            resultado = Resultado(
+                leituras=[
+                    Leitura(vaga.id, Estado.OCUPADA if ocupada else Estado.LIVRE,
+                            classe_detectada="veiculo_por_pdi" if ocupada else None)
+                    for vaga, ocupada in zip(self.mapa, ocupadas)
+                ],
+                ms_inferencia=self.detector.ms_ultima_inferencia,
             )
+        else:
+            deteccoes = self.detector.detectar(quadro)
+            ms = self.detector.ms_ultima_inferencia
+            if self.por_vaga:
+                resultado = decidir_por_vaga(self.mapa, deteccoes, ms_inferencia=ms)
+            else:
+                resultado = decidir_por_veiculo(
+                    self.mapa, deteccoes, limiar=self.limiar, ms_inferencia=ms
+                )
         if suavizar and self.suavizador is not None:
             resultado = self.suavizador.aplicar(resultado)
         return resultado

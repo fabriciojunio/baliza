@@ -2,16 +2,24 @@
 
 O professor pediu que o problema fosse resolvido com processamento digital de
 imagens, e que biblioteca pronta de detecção entrasse só em último caso. Este
-documento é a resposta: um terceiro detector que não usa YOLO, não carrega peso
-treinado e não usa classificador de aprendizado de máquina, e o quanto ele
+documento descreve um terceiro detector que não usa YOLO nem rede neural,
+mas escolhe pesos e limiar de uma combinação linear com rótulos de treino, e o quanto ele
 perde para o que já estava no projeto.
 
-A resposta curta: **86,5% de acerto numa câmera que ele nunca viu, contra
-97,5% do YOLO, e 155 vezes mais rápido na CPU.**
+Os resultados históricos são **86,5% contra 97,5% do YOLO** em uma comparação
+offline transdutiva: a PDI usa estatísticas de toda a amostra da câmera de
+teste sem seus rótulos. Não são resultados do runtime online. Os 155 vezes
+referem-se ao tempo de extração das medidas, sem o custo de adaptação por
+câmera nem a latência de esperar os quadros futuros.
+
+Em 11/10/2026 foram corrigidos o caminho do JSON na CLI, o repasse das vagas
+e a decisão direta por polígono. O runtime agora recusa a calibração histórica
+por câmera, pois não possui os momentos externos usados na avaliação. Para
+rodar com momentos estimados apenas no treino:
 
 ```
-baliza rodar demo/patios/ufpr04.mp4 --mapa demo/mapas/ufpr04.json \
-       --detector classico --mostrar
+python treino/calibrar_pdi.py --normalizacao global --saida resultados/pdi-online
+baliza rodar demo/patios/ufpr04.mp4 --mapa demo/mapas/ufpr04.json --detector classico --pesos resultados/pdi-online/pdi_calibracao.json --mostrar
 ```
 
 ## A ideia
@@ -31,9 +39,9 @@ quando a anterior não bastava.
    pixels e a da frente ocupa muitos; medir densidade de borda sem corrigir
    isso faria a vaga distante parecer sempre mais lisa, ou seja, sempre livre.
 2. **Escala de cinza.** A cor do carro não ajuda a decidir se há carro.
-3. **CLAHE**, equalização adaptativa limitada por contraste. É o passo que faz
-   o mesmo limiar valer de manhã e à tarde. Sem ele, o dia nublado derruba
-   todas as medidas de uma vez e o pátio inteiro parece vazio.
+3. **CLAHE**, equalização adaptativa limitada por contraste, para reduzir
+   diferenças locais de iluminação. Isso não garante que o mesmo limiar
+   funcione de manhã e à tarde ou em outro pátio.
 4. **Desfoque gaussiano leve.** O PKLot é todo JPEG, e borda de artefato de
    compressão conta como borda.
 5. **Canny com limiares derivados da mediana** da própria imagem, não fixos.
@@ -47,7 +55,9 @@ quando a anterior não bastava.
 
 O limiar não é escolhido no olho. Ele é calibrado em
 `treino/calibrar_pdi.py`, e o protocolo é o mesmo do resto do projeto:
-**calibra em duas câmeras e mede na terceira, que o detector nunca viu.**
+**calibra com os rótulos de duas câmeras e mede na terceira.**
+No modo histórico por câmera, o cálculo dos momentos acessa as medidas da
+terceira câmera durante a avaliação; ela é inédita apenas quanto aos rótulos.
 Medir na mesma câmera em que se calibrou responde uma pergunta fácil e
 diferente da que importa.
 
@@ -68,7 +78,9 @@ das vagas ocupadas passar como livres. Padronizar dentro de cada câmera
 transforma a pergunta "esta vaga tem muita estrutura?" em "esta vaga tem mais
 estrutura que as outras desta câmera?", que é a pergunta que generaliza. É
 adaptação de domínio por casamento de momentos, e **não usa rótulo nenhum da
-câmera nova**: só as medidas, que estão disponíveis assim que a câmera liga.
+câmera nova**. Usa, porém, todos os quadros amostrados, inclusive os futuros.
+Esses momentos não estão disponíveis assim que a câmera liga. Estimar momentos
+em uma janela passada seria outro protocolo, ainda sem validação neste projeto.
 
 Padronizar por **imagem** em vez de por câmera foi testado e ficou pior (0,58):
 com poucas dezenas de vagas por quadro, o desvio é ruidoso demais.
@@ -79,8 +91,11 @@ aconteceu na primeira versão.
 
 ## O que foi medido
 
-Protocolo: calibrado em PUCPR e UFPR04, medido na UFPR05, que o detector nunca
-viu. 28.981 vagas medidas no total, 7.158 delas no teste.
+Protocolo histórico: rótulos de treino de PUCPR e UFPR04, medido na UFPR05
+com normalização transdutiva por câmera. 28.981 vagas medidas no total, 7.158
+delas no teste. Os números abaixo não foram recalculados nesta correção. O
+campo histórico `acuracia_de_treino` armazenava o F1 escolhido pela busca;
+o script corrigido passa a calcular a acurácia efetiva para esse campo.
 
 ### Poder de separação de cada medida, sozinha
 
@@ -96,7 +111,7 @@ A densidade de borda, que é a medida mais óbvia e a que a maioria dos tutoriai
 usa sozinha, é a **pior** das cinco. O desvio do cinza, que é quase trivial de
 calcular, é a melhor.
 
-### Câmera nunca vista (UFPR05), 7.158 vagas
+### Câmera com rótulos separados (UFPR05), 7.158 vagas
 
 | | valor |
 |---|---|
@@ -147,8 +162,8 @@ O que o clássico tem a favor, e não é pouco:
 - **155 vezes mais rápido na CPU**, 34 ms contra 5,3 s por imagem. O número do
   YOLO é de CPU; com GPU ele cai muito, mas aí a conta deixa de ser só de
   software;
-- **não carrega peso nenhum.** Não há download de modelo, não há dependência de
-  framework de aprendizado profundo, não há licença de modelo a verificar;
+- **não carrega pesos de rede neural.** Não há download de modelo nem dependência de
+  framework de aprendizado profundo para essas operações;
 - **cada etapa é inspecionável.** Dá para abrir o recorte, ver a saída do Canny
   e entender por que uma vaga foi classificada daquele jeito. A rede responde
   com uma caixa e uma confiança;
@@ -164,12 +179,16 @@ específica.
 ## Reproduzir
 
 ```
-python treino/calibrar_pdi.py --limite-por-camera 60 --normalizacao camera
-python treino/comparar_pdi_e_yolo.py --limite-por-clima 20 --tamanho 1280
+python treino/calibrar_pdi.py --limite-por-camera 60 --normalizacao camera --saida resultados/pdi-offline
+python treino/comparar_pdi_e_yolo.py --limite-por-clima 20 --tamanho 1280 --saida resultados/pdi-offline
 ```
 
-Saídas em `resultados/pdi_calibracao.json`, `resultados/pdi_resultado.json` e
-`resultados/comparacao_pdi_yolo.json`.
+Saídas na pasta indicada: `pdi_calibracao.json`, `pdi_resultado.json` e
+`comparacao_pdi_yolo.json`. A comparação agora respeita a normalização
+declarada no JSON e usa o mesmo desvio amostral (`ddof=1`) da calibração por
+câmera/imagem. Isso exige recalcular os números ao reproduzir. O cache
+`pdi_medidas.csv`, quando existente na pasta de saída, é reutilizado; altere
+a pasta de saída para medir uma amostra nova.
 
 ## Limites declarados
 
@@ -178,7 +197,12 @@ Saídas em `resultados/pdi_calibracao.json`, `resultados/pdi_resultado.json` e
 - a medição é sobre as imagens do PKLot, não sobre vídeo contínuo. Em vídeo o
   clássico poderia melhorar com um modelo de fundo por mediana temporal, que
   não foi implementado;
-- a padronização por câmera precisa de um conjunto de vagas da câmera para
-  estimar média e desvio. Numa câmera recém-ligada, isso exige alguns quadros
-  antes da primeira decisão confiável;
+- a padronização histórica por câmera usa a amostra de teste inteira.
+  O runtime não a implementa nem promete primeira decisão confiável após
+  alguns quadros; aceita somente normalização global com momentos de treino;
 - chuva é o pior caso e está medido, não contornado.
+
+A base e os XMLs de referência são descritos pelo [Laboratório VRI da
+UFPR](https://web.inf.ufpr.br/vri/databases/parking-lot-database/). Essa fonte
+documenta câmeras, climas, datas e rótulos; ela não valida os resultados do
+detector deste projeto.

@@ -139,3 +139,69 @@ def test_pesos_treinados_ausentes_caem_no_geral_avisando(tmp_path):
                                          MapaFalso(detector="vagas"))
     assert modo == "veiculos"
     assert "nao esta em disco" in motivo
+
+
+def test_classico_processa_imagem_com_calibracao_explicita(tmp_path, mapa_de_quatro, quadro, capsys):
+    import json
+
+    import cv2
+
+    from baliza.pdi import Calibracao
+
+    mapa = tmp_path / "mapa.json"
+    mapa_de_quatro.salvar(mapa)
+    imagem = tmp_path / "patio.png"
+    assert cv2.imwrite(str(imagem), quadro)
+    calibracao = tmp_path / "calibracao.json"
+    calibracao.write_text(json.dumps(Calibracao(limiar=2.0).como_dict()), encoding="utf-8")
+    assert main(["rodar", str(imagem), "--mapa", str(mapa), "--detector", "classico",
+                 "--pesos", str(calibracao), "--janela", "1"]) == 0
+    saida = capsys.readouterr().out
+    assert "1 quadros processados" in saida
+    assert "4 livres, 0 ocupadas" in saida
+
+
+def test_classico_padrao_resolve_json_de_calibracao():
+    from pathlib import Path
+
+    from baliza.cli import _resolver_detector
+
+    modo, caminho, _ = _resolver_detector("classico", None, MapaFalso())
+    assert modo == "classico"
+    assert Path(caminho).name == "pdi_calibracao.json"
+
+
+def test_classico_recomendado_no_mapa_preserva_calibracao(tmp_path, mapa_de_quatro):
+    from baliza.cli import _resolver_detector
+    from baliza.mapa import Mapa
+
+    mapa_de_quatro.detector = "classico"
+    mapa_de_quatro.pesos = str(tmp_path / "minha_calibracao.json")
+    caminho_mapa = tmp_path / "mapa.json"
+    mapa_de_quatro.salvar(caminho_mapa)
+    lido = Mapa.carregar(caminho_mapa)
+    modo, caminho, motivo = _resolver_detector(None, None, lido)
+    assert modo == "classico"
+    assert caminho == mapa_de_quatro.pesos
+    assert "recomendado" in motivo
+
+
+@pytest.mark.parametrize("tipo", ["ausente", "camera", "json_quebrado"])
+def test_classico_falha_com_erro_claro_para_calibracao_invalida(
+    tipo, tmp_path, mapa_de_quatro, capsys
+):
+    import json
+
+    from baliza.pdi import Calibracao
+
+    mapa = tmp_path / "mapa.json"
+    mapa_de_quatro.salvar(mapa)
+    cal = tmp_path / "calibracao.json"
+    if tipo == "camera":
+        cal.write_text(json.dumps(Calibracao(normalizacao="camera").como_dict()), encoding="utf-8")
+    elif tipo == "json_quebrado":
+        cal.write_text("{", encoding="utf-8")
+    codigo = main(["rodar", "imagem.png", "--mapa", str(mapa),
+                   "--detector", "classico", "--pesos", str(cal)])
+    assert codigo == 2
+    assert "erro:" in capsys.readouterr().err

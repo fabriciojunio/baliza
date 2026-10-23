@@ -233,14 +233,17 @@ def abrir_detector(
         return DetectorVagas(pesos, confianca, tamanho, dispositivo)
     if modo == "classico":
         # Caminho sem rede neural: processamento digital de imagens sobre o
-        # recorte de cada vaga. Nao carrega peso nenhum e roda em CPU.
+        # recorte de cada vaga. Carrega a calibracao linear e roda em CPU.
         from .pdi import Calibracao, DetectorClassico
 
-        cal = None
         caminho = Path(pesos) if pesos else Path("resultados/pdi_calibracao.json")
-        if caminho.exists():
-            import json
+        if not caminho.is_file():
+            raise FileNotFoundError(
+                f"calibracao classica nao encontrada: {caminho}; "
+                "gere um JSON com treino/calibrar_pdi.py --normalizacao global"
+            )
+        import json
 
-            cal = Calibracao.de_dict(json.loads(caminho.read_text(encoding="utf-8")))
+        cal = Calibracao.de_dict(json.loads(caminho.read_text(encoding="utf-8")))
         return DetectorClassico(cal)
     raise ValueError(f"modo de deteccao desconhecido: {modo}")

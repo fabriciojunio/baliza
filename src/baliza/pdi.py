@@ -2,8 +2,8 @@
 
 Existe porque o professor pediu que o problema fosse resolvido com PDI, e que
 biblioteca pronta de detecção entrasse só em último caso. Este módulo não usa
-YOLO, não usa pesos treinados e não usa classificador de aprendizado de
-máquina: só operações clássicas de imagem sobre o recorte de cada vaga.
+YOLO nem pesos de rede neural. Extrai medidas por operações clássicas de
+imagem e escolhe pesos e limiar de uma combinação linear com rótulos de treino.
 
 **A ideia.** Asfalto vazio é liso: tem pouca borda, pouca variação de
 intensidade e pouca textura. Carro em cima é o contrário: tem contorno,
@@ -28,8 +28,9 @@ sobre **quanta estrutura existe dentro do polígono da vaga**.
    entropia do histograma e média do gradiente de Sobel.
 
 **A decisão.** O limiar não é chutado: ele é calibrado em
-`treino/calibrar_pdi.py` nas câmeras de treino e vale para a câmera de teste,
-que o detector nunca viu. Há também o modo **Otsu por quadro**, que separa as
+`treino/calibrar_pdi.py` nas câmeras de treino. O runtime aceita somente
+normalização global, com momentos de treino; a avaliação histórica por câmera
+é transdutiva e não mede esse runtime. Há também o modo **Otsu por quadro**, que separa as
 vagas do próprio quadro em dois grupos sem constante nenhuma e se adapta
 sozinho à iluminação do momento.
 """
@@ -209,6 +210,18 @@ class Calibracao:
     limiar: float = 0.0
     camera_de_treino: str = ""
     acuracia_de_treino: float = 0.0
+    normalizacao: str = "global"
+
+    def __post_init__(self):
+        for nome in ("medias", "desvios", "pesos"):
+            vetor = np.asarray(getattr(self, nome), dtype=float)
+            if vetor.shape != (len(NOMES_DAS_MEDIDAS),) or not np.isfinite(vetor).all():
+                raise ValueError(f"calibracao invalida: {nome} deve ter cinco valores finitos")
+            setattr(self, nome, vetor)
+        if (self.desvios < 0).any() or not np.isfinite(self.limiar):
+            raise ValueError("calibracao invalida: desvios negativos ou limiar nao finito")
+        if self.normalizacao not in ("global", "camera", "imagem"):
+            raise ValueError(f"normalizacao desconhecida: {self.normalizacao}")
 
     def pontuar(self, m: Medidas) -> float:
         z = (m.como_vetor() - self.medias) / np.where(
@@ -228,18 +241,32 @@ class Calibracao:
             "camera_de_treino": self.camera_de_treino,
             "acuracia_de_treino": self.acuracia_de_treino,
             "medidas": list(NOMES_DAS_MEDIDAS),
+            "normalizacao": self.normalizacao,
         }
 
     @staticmethod
     def de_dict(d: dict) -> "Calibracao":
-        return Calibracao(
-            medias=np.array(d["medias"], dtype=float),
-            desvios=np.array(d["desvios"], dtype=float),
-            pesos=np.array(d["pesos"], dtype=float),
-            limiar=float(d["limiar"]),
-            camera_de_treino=d.get("camera_de_treino", ""),
-            acuracia_de_treino=float(d.get("acuracia_de_treino", 0.0)),
-        )
+        if not isinstance(d, dict) or "normalizacao" not in d:
+            raise ValueError(
+                "calibracao sem normalizacao declarada; gere novamente com "
+                "treino/calibrar_pdi.py --normalizacao global"
+            )
+        if d.get("medidas") != list(NOMES_DAS_MEDIDAS):
+            raise ValueError("calibracao incompativel: ordem das cinco medidas incorreta")
+        if not all(nome in d for nome in ("medias", "desvios", "pesos", "limiar")):
+            raise ValueError("calibracao incompleta: faltam medias, desvios, pesos ou limiar")
+        try:
+            return Calibracao(
+                medias=np.array(d["medias"], dtype=float),
+                desvios=np.array(d["desvios"], dtype=float),
+                pesos=np.array(d["pesos"], dtype=float),
+                limiar=float(d["limiar"]),
+                camera_de_treino=d.get("camera_de_treino", ""),
+                acuracia_de_treino=float(d.get("acuracia_de_treino", 0.0)),
+                normalizacao=d["normalizacao"],
+            )
+        except (TypeError, ValueError) as erro:
+            raise ValueError(f"calibracao invalida: {erro}") from erro
 
 
 def limiar_de_otsu(valores: np.ndarray) -> float:
@@ -293,12 +320,14 @@ class DetectorClassico:
     Dois modos:
 
     - `calibrado`: usa a combinação linear e o limiar vindos das câmeras de
-      treino. É o modo que roda em câmera nova sem nenhum ajuste;
+      treino, com normalização global. Pode executar em câmera nova, mas sua
+      acurácia precisa ser medida;
     - `otsu`: separa as vagas do próprio quadro em dois grupos. Não precisa de
       constante, mas assume que o pátio tem vagas dos dois tipos no quadro.
     """
 
     nome = "classico"
+    dispositivo = "cpu"
 
     def __init__(
         self,
@@ -307,6 +336,16 @@ class DetectorClassico:
         medida_para_otsu: str = "densidade_de_borda",
     ):
         self.calibracao = calibracao or Calibracao()
+        if modo not in ("calibrado", "otsu"):
+            raise ValueError(f"modo classico desconhecido: {modo}")
+        if modo == "calibrado" and self.calibracao.normalizacao != "global":
+            raise ValueError(
+                f"calibracao com normalizacao {self.calibracao.normalizacao} "
+                "incompativel com execucao online: faltam as estatisticas "
+                "externas usadas na avaliacao; gere com --normalizacao global"
+            )
+        if medida_para_otsu not in NOMES_DAS_MEDIDAS:
+            raise ValueError(f"medida para Otsu desconhecida: {medida_para_otsu}")
         self.modo = modo
         self.medida_para_otsu = medida_para_otsu
         self.ms_ultima_inferencia = 0.0

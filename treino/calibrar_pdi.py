@@ -1,9 +1,9 @@
 """Calibra e mede o detector clássico no PKLot.
 
-O protocolo é o mesmo do resto do projeto, e é o que dá sentido ao número:
-**calibra em duas câmeras e mede na terceira, que o detector nunca viu**.
-Medir na mesma câmera em que se calibrou responde uma pergunta fácil e
-diferente da que importa.
+Calibra com os rótulos de duas câmeras e mede na terceira. O modo global
+usa somente estatísticas de treino e pode ser executado online. O modo câmera
+é transdutivo: estima média e desvio usando toda a amostra da câmera de teste,
+sem rótulos; não mede a execução online nem pode antecipar esses momentos.
 
 Saídas:
     resultados/pdi_medidas.csv        medidas por vaga, com o rótulo
@@ -158,7 +158,7 @@ def calibrar(treino: np.ndarray, y: np.ndarray) -> Calibracao:
     """Escolhe pesos e limiar por varredura sobre combinações de medidas.
 
     Varre todos os subconjuntos de até três medidas, com peso +1 ou -1, e fica
-    com o que der a maior acurácia no treino. É busca exaustiva sobre um
+    com o que der o maior F1 no treino. É busca exaustiva sobre um
     espaço pequeno e declarado, não ajuste de modelo: dá para escrever as
     constantes na monografia e conferir à mão.
     """
@@ -178,13 +178,13 @@ def calibrar(treino: np.ndarray, y: np.ndarray) -> Calibracao:
                 t, a = _melhor_limiar(pont, y)
                 if a > melhor[2]:
                     melhor = (w.copy(), t, a)
-    pesos, limiar, acc = melhor
+    pesos, limiar, _ = melhor
     return Calibracao(
         medias=medias,
         desvios=desvios,
         pesos=pesos,
         limiar=limiar,
-        acuracia_de_treino=acc,
+        acuracia_de_treino=_acuracia(z @ pesos, y, limiar),
     )
 
 
@@ -195,7 +195,8 @@ def main() -> int:
     ap.add_argument("--teste", type=str, default="UFPR05")
     ap.add_argument("--saida", type=str, default="resultados")
     ap.add_argument(
-        "--normalizacao", choices=["global", "imagem", "camera"], default="camera"
+        "--normalizacao", choices=["global", "imagem", "camera"], default="global",
+        help="global: compativel com runtime; camera: experimento transdutivo offline",
     )
     args = ap.parse_args()
 
@@ -252,9 +253,9 @@ def main() -> int:
         # Padroniza as medidas DENTRO de cada camera. A escala absoluta das
         # medidas depende da camera (altura, distancia focal, tamanho da vaga
         # em pixels, exposicao), mas a comparacao entre vagas da MESMA camera
-        # e justa. Isso e adaptacao de dominio por casamento de momentos, e
-        # nao usa rotulo nenhum da camera de teste: so as medidas, que estao
-        # disponiveis assim que a camera e ligada.
+        # e justa. Este experimento e transdutivo: usa todas as medidas do
+        # conjunto de teste para estimar momentos, inclusive quadros futuros.
+        # Nao usa rotulos, mas nao representa a execucao online.
         def _por_camera(d):
             g = d.groupby("camera")[cols]
             mu = g.transform("mean")
@@ -267,6 +268,7 @@ def main() -> int:
         x_tr = treino[cols].to_numpy(float)
         x_te = teste[cols].to_numpy(float)
     cal = calibrar(x_tr, treino["ocupada"].to_numpy(int))
+    cal.normalizacao = modo_norm
     cal.camera_de_treino = "+".join(sorted(treino["camera"].unique()))
     usados = [cols[i] for i in np.nonzero(cal.pesos)[0]]
     print(f"\n== calibracao escolhida ==")
@@ -323,9 +325,11 @@ def main() -> int:
             {
                 "normalizacao": args.normalizacao,
                 "protocolo": (
-                    f"calibrado em {cal.camera_de_treino}, medido em "
-                    f"{args.teste}, que o detector nunca viu"
+                    f"rotulos de treino: {cal.camera_de_treino}; medido em "
+                    f"{args.teste}; normalizacao {modo_norm}"
                 ),
+                "transdutivo": modo_norm == "camera",
+                "compativel_com_runtime": modo_norm == "global",
                 "n_treino": int(len(treino)),
                 "n_teste": int(len(teste)),
                 "taxa_de_ocupacao_no_teste": float(teste["ocupada"].mean()),

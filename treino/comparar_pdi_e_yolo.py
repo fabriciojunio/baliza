@@ -5,9 +5,10 @@ tirados de amostras diferentes, com protocolos diferentes, não respondem
 "quanto se perde sem rede neural"; respondem "quanto dois experimentos
 diferentes deram".
 
-Protocolo: as imagens amostradas da UFPR05, câmera que nenhum dos dois viu em
-treino. O clássico foi calibrado em PUCPR e UFPR04; o YOLO usa os pesos gerais
-do COCO, sem treino nenhum no PKLot.
+Protocolo: rótulos da UFPR05 separados do treino. A normalização respeita o
+JSON de calibração: global usa momentos de treino, câmera usa toda a amostra
+de teste sem rótulos (transdutivo, offline), imagem usa as vagas do quadro.
+O YOLO usa os pesos gerais do COCO, sem treino no PKLot.
 
 Uso:
     python treino/comparar_pdi_e_yolo.py --limite-por-clima 40
@@ -32,6 +33,30 @@ from baliza.geometria import fracao_coberta  # noqa: E402
 from baliza.pdi import Calibracao, medir, recortar_vaga  # noqa: E402
 
 CLASSES_VEICULO = {2, 3, 5, 7}
+
+
+def pontuar_blocos(cal: Calibracao, blocos: list[np.ndarray]) -> list[np.ndarray]:
+    """Aplica a mesma normalização declarada no artefato de calibração."""
+    if not blocos:
+        raise ValueError("nenhuma imagem com vagas validas para comparar")
+
+    def padronizar(x):
+        mu = x.mean(axis=0)
+        # groupby.std() usado na calibração opera com ddof=1.
+        sd = x.std(axis=0, ddof=1) if len(x) > 1 else np.ones(x.shape[1])
+        sd = np.where((sd == 0) | ~np.isfinite(sd), 1.0, sd)
+        return mu, sd
+
+    if cal.normalizacao == "camera":
+        mu, sd = padronizar(np.vstack(blocos))
+    saida = []
+    for bloco in blocos:
+        if cal.normalizacao == "imagem":
+            mu, sd = padronizar(bloco)
+        x = (bloco - mu) / sd if cal.normalizacao != "global" else bloco
+        z = (x - cal.medias) / np.where(cal.desvios == 0, 1.0, cal.desvios)
+        saida.append(z @ cal.pesos)
+    return saida
 
 
 def ler_anotacao(xml: Path):
@@ -93,11 +118,10 @@ def main() -> int:
     pred_yolo: list[int] = []
     ms_pdi, ms_yolo = 0.0, 0.0
     medidas_cam: list[np.ndarray] = []
-    contornos_por_img: list[list] = []
     rotulos_por_img: list[list] = []
+    imagens_validas: list[Path] = []
 
-    # primeira passada: medidas do classico (precisa das estatisticas da camera
-    # inteira para a padronizacao por camera, que e como ele foi calibrado)
+    # Mede primeiro; somente o modo câmera usa toda a amostra para normalizar.
     for x in imagens:
         jpg = x.with_suffix(".jpg")
         quadro = cv2.imread(str(jpg))
@@ -110,27 +134,25 @@ def main() -> int:
         ms = [medir(recortar_vaga(quadro, c)).como_vetor() for c, _ in vagas]
         ms_pdi += (time.perf_counter() - t0) * 1000.0
         medidas_cam.append(np.array(ms))
-        contornos_por_img.append([c for c, _ in vagas])
         rotulos_por_img.append([o for _, o in vagas])
+        imagens_validas.append(x)
 
-    todas = np.vstack(medidas_cam)
-    mu, sd = todas.mean(axis=0), todas.std(axis=0)
-    sd[sd == 0] = 1.0
-
-    for bloco, rot in zip(medidas_cam, rotulos_por_img):
-        z = (bloco - mu) / sd
-        z = (z - cal.medias) / np.where(cal.desvios == 0, 1.0, cal.desvios)
-        pontos = z @ cal.pesos
+    try:
+        pontos_por_img = pontuar_blocos(cal, medidas_cam)
+    except ValueError as erro:
+        print(f"erro: {erro}", file=sys.stderr)
+        return 2
+    for pontos, rot in zip(pontos_por_img, rotulos_por_img):
         pred_pdi += [int(p >= cal.limiar) for p in pontos]
         y_true += rot
 
     # segunda passada: YOLO nas mesmas imagens
     k = 0
-    for x in imagens:
+    for x in imagens_validas:
         jpg = x.with_suffix(".jpg")
         quadro = cv2.imread(str(jpg))
         if quadro is None:
-            continue
+            raise RuntimeError(f"imagem deixou de estar disponivel na segunda leitura: {jpg}")
         vagas = ler_anotacao(x)
         if not vagas:
             continue
@@ -155,8 +177,9 @@ def main() -> int:
     y = np.array(y_true)
     pp = np.array(pred_pdi)
     py = np.array(pred_yolo)
-    n = min(len(y), len(pp), len(py))
-    y, pp, py = y[:n], pp[:n], py[:n]
+    if not (len(y) == len(pp) == len(py)):
+        raise RuntimeError("comparacao desalinhada: numero de vagas difere entre os detectores")
+    n = len(y)
 
     def metricas(pred):
         vp = int(((pred == 1) & (y == 1)).sum())
@@ -192,6 +215,8 @@ def main() -> int:
         json.dumps(
             {
                 "camera": args.camera,
+                "normalizacao_classico": cal.normalizacao,
+                "transdutivo": cal.normalizacao == "camera",
                 "configuracao_yolo": {
                     "pesos": "yolo11n.pt (COCO)",
                     "tamanho": args.tamanho,
@@ -207,8 +232,9 @@ def main() -> int:
                 "concordancia": concorda,
                 "observacao": (
                     "Mesmas imagens para os dois. O classico foi calibrado em "
-                    "PUCPR e UFPR04; o YOLO usa pesos gerais do COCO sem treino "
-                    "no PKLot. Nenhum dos dois viu a UFPR05."
+                    f"{cal.camera_de_treino}; o YOLO usa pesos gerais do COCO sem treino "
+                    f"no PKLot. Normalizacao classica: {cal.normalizacao}; "
+                    "camera usa toda a amostra de teste sem rotulos, offline."
                 ),
             },
             ensure_ascii=False,

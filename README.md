@@ -35,13 +35,29 @@ enxerga o que o primeiro não enxerga: pátio grande fotografado de longe, onde
 o carro tem vinte pixels e o detector geral simplesmente não o vê.
 
 **Detector clássico** (`--detector classico`). Processamento digital de
-imagens, sem rede neural e sem peso treinado: recorta o polígono da vaga,
+imagens, sem rede neural: recorta o polígono da vaga,
 normaliza a iluminação, mede borda, textura e entropia, e decide por um limiar
 calibrado. Existe porque o professor pediu que o problema fosse resolvido com
-PDI e que biblioteca pronta de detecção entrasse só em último caso. Numa câmera
-nunca vista faz 86,5% contra 97,5% do YOLO, e roda 155 vezes mais rápido na
-CPU. A medição inteira, com o que ele ganha e o que ele perde, está em
+PDI e que biblioteca pronta de detecção entrasse só em último caso. A comparação
+histórica offline registrou 86,5% contra 97,5% do YOLO e tempo de extração de
+medidas 155 vezes menor na CPU. Ela usa média e desvio de **toda a amostra da
+câmera de teste**, sem rótulos (avaliação transdutiva); esses números não foram
+obtidos na execução online. O runtime exige um JSON com normalização global,
+estimada apenas no treino, e recusa a calibração histórica por câmera. A
+medição inteira, com o que ele ganha e o que ele perde, está em
 [docs/DETECTOR-CLASSICO.md](docs/DETECTOR-CLASSICO.md).
+
+Para gerar uma calibração compatível e usá-la, preservando os resultados
+históricos:
+
+```
+python treino/calibrar_pdi.py --normalizacao global --saida resultados/pdi-online
+baliza rodar demo/patios/ufpr04.mp4 --mapa demo/mapas/ufpr04.json --detector classico --pesos resultados/pdi-online/pdi_calibracao.json
+```
+
+A combinação linear e seu limiar são escolhidos usando rótulos de treino.
+Executar esse pipeline não garante a acurácia histórica nem acerto em todos os
+quadros; uma calibração global precisa de sua própria avaliação.
 
 Não é preciso escolher: cada mapa de vagas guarda qual detector funciona
 naquela câmera, medido e não chutado, e o programa avisa qual escolheu. Se os
@@ -163,6 +179,22 @@ mesmo pátio de cinco em cinco minutos: com divisão aleatória a foto das
 10h05 cai no treino e a das 10h10 no teste, o número sobe e não quer dizer
 nada. Treino e validação saem da PUCPR e da UFPR04, em dias alternados; o
 teste é a UFPR05 inteira, uma câmera que o modelo nunca viu.
+
+O protocolo complementar `conjunto_completo`, usado pelo modelo de demonstração
+das três câmeras, separa dias pares para treino, dias 1, 5, 9… para validação e
+dias 3, 7, 11… para teste. Em 11/10/2026 foi corrigida uma falha que alternava
+**fotos**, permitindo que validação e teste compartilhassem o mesmo dia.
+Os pesos e números históricos desse protocolo não foram recalculados e não
+constituem uma avaliação independente de teste; exigem nova exportação, treino
+e avaliação. O protocolo principal por câmera descrito acima não usava essa
+divisão complementar. As acurácias da demonstração também participaram da
+escolha de pesos por câmera, portanto descrevem a demonstração, sem servir
+como estimativa de generalização para outros dias ou câmeras.
+
+O exportador exige uma pasta de saída vazia para impedir que fotos de uma
+divisão anterior permaneçam em partições erradas. Para o protocolo completo
+corrigido, use, por exemplo, `--completo --saida dados/yolo-completo-corrigido`
+e treine com o novo `pklot.yaml`. Os diretórios e pesos históricos são preservados.
 
 ## Testes
 

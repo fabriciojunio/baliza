@@ -186,3 +186,32 @@ def test_detector_nao_carrega_peso_nenhum():
     d = DetectorClassico()
     assert not hasattr(d, "pesos")
     assert d.nome == "classico"
+
+
+@pytest.mark.parametrize("normalizacao", ["camera", "imagem"])
+def test_runtime_recusa_calibracao_com_momentos_externos(normalizacao):
+    cal = Calibracao(normalizacao=normalizacao)
+    with pytest.raises(ValueError, match="incompativel com execucao online"):
+        DetectorClassico(cal)
+
+
+def test_calibracao_sem_protocolo_nao_e_adivinhada():
+    dados = Calibracao().como_dict()
+    del dados["normalizacao"]
+    with pytest.raises(ValueError, match="sem normalizacao declarada"):
+        Calibracao.de_dict(dados)
+
+
+@pytest.mark.parametrize("campo,valor", [
+    ("medias", [0.0]),
+    ("pesos", [float("nan")] * 5),
+    ("desvios", [-1.0] * 5),
+    ("limiar", float("inf")),
+    ("limiar", None),
+    ("medidas", list(reversed(NOMES_DAS_MEDIDAS))),
+])
+def test_calibracao_recusa_estatisticas_incompativeis(campo, valor):
+    dados = Calibracao().como_dict()
+    dados[campo] = valor
+    with pytest.raises(ValueError):
+        Calibracao.de_dict(dados)

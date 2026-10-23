@@ -32,6 +32,13 @@ def _resolver_detector(escolhido: str | None, pesos: str | None, mapa) -> tuple[
     else:
         modo, motivo = "veiculos", "padrao"
 
+    if modo == "classico":
+        sugeridos = getattr(mapa, "pesos", None) if not escolhido else None
+        caminho = Path(pesos or sugeridos or RAIZ / "resultados" / "pdi_calibracao.json")
+        if not caminho.is_absolute() and not caminho.exists():
+            caminho = RAIZ / caminho
+        return modo, str(caminho), motivo
+
     if modo == "vagas":
         sugeridos = getattr(mapa, "pesos", None) if not escolhido else None
         caminho = Path(pesos or sugeridos or MODELOS / "vagas.pt")
@@ -55,14 +62,18 @@ def _comando_rodar(args) -> int:
 
     mapa = Mapa.carregar(args.mapa)
     modo, pesos, motivo = _resolver_detector(args.detector, args.pesos, mapa)
-    detector = abrir_detector(
-        modo=modo,
-        pesos=pesos,
-        confianca=args.confianca,
-        tamanho=args.tamanho,
-        dispositivo=args.dispositivo,
-        janelas=args.janelas,
-    )
+    try:
+        detector = abrir_detector(
+            modo=modo,
+            pesos=pesos,
+            confianca=args.confianca,
+            tamanho=args.tamanho,
+            dispositivo=args.dispositivo,
+            janelas=args.janelas,
+        )
+    except (OSError, ValueError) as erro:
+        print(f"erro: {erro}", file=sys.stderr)
+        return 2
     registro = Registro(args.banco) if args.banco else None
     sistema = Baliza(mapa, detector, limiar=args.limiar, janela_suavizacao=args.janela,
                      registro=registro)
@@ -156,7 +167,11 @@ def _comando_demonstracao(args) -> int:
     modo, pesos, motivo = _resolver_detector(args.detector, args.pesos, mapa)
     detalhe = f", pesos {Path(pesos).name}" if modo == "vagas" else ""
     print(f"detector {modo}{detalhe} ({motivo})")
-    detector = abrir_detector(modo, pesos, tamanho=args.tamanho)
+    try:
+        detector = abrir_detector(modo, pesos, tamanho=args.tamanho)
+    except (OSError, ValueError) as erro:
+        print(f"erro: {erro}", file=sys.stderr)
+        return 2
     sistema = Baliza(mapa, detector)
     resultados = sistema.rodar(abrir_fonte(alvo), mostrar=not args.sem_janela)
     if resultados:
@@ -185,7 +200,7 @@ def construir_parser() -> argparse.ArgumentParser:
     rodar.add_argument("--mapa", required=True, help="JSON com o mapa de vagas")
     rodar.add_argument("--detector", choices=("veiculos", "vagas", "classico"), default=None,
                        help="sem isso vale a recomendacao gravada no mapa")
-    rodar.add_argument("--pesos", default=None, help="pesos do YOLO")
+    rodar.add_argument("--pesos", default=None, help="pesos do YOLO ou JSON de calibracao do classico")
     rodar.add_argument("--tamanho", type=int, default=1280, help="lado da entrada do modelo")
     rodar.add_argument("--confianca", type=float, default=0.25)
     rodar.add_argument("--limiar", type=float, default=0.30,

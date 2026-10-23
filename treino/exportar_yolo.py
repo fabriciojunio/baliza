@@ -46,6 +46,12 @@ def rotulo_de(anotacao: Path, largura: int, altura: int) -> list[str]:
 
 
 def exportar(raiz: str, saida: Path, por_dia: int, completo: bool = False) -> dict[str, int]:
+    if por_dia < 1:
+        raise ValueError("por-dia deve ser maior que zero")
+    # Copiar por cima mantém fotos de uma divisão anterior na pasta errada.
+    # Exige uma pasta nova; nunca apaga exportações ou arquivos do usuário.
+    if saida.exists() and (not saida.is_dir() or any(saida.iterdir())):
+        raise ValueError(f"destino nao vazio: {saida}; escolha outra pasta com --saida")
     pastas = {"treino": "train", "validacao": "val", "teste": "test"}
     # A validação roda a cada época, então ela vai menor de propósito: o que
     # se quer dela é a curva, não a medição final, que sai no teste.
@@ -101,7 +107,10 @@ def main() -> int:
     parser.add_argument("--completo", action="store_true",
                         help="inclui a UFPR05 no treino, para o modelo da demonstracao")
     args = parser.parse_args()
-    exportar(args.raiz, Path(args.saida), args.por_dia, args.completo)
+    try:
+        exportar(args.raiz, Path(args.saida), args.por_dia, args.completo)
+    except ValueError as erro:
+        parser.error(str(erro))
     return 0
 
 

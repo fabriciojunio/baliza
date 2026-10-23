@@ -69,3 +69,19 @@ def test_callback_recebe_o_quadro_anotado(tmp_path, mapa_de_quatro):
     sistema.rodar(FontePasta(tmp_path), a_cada_quadro=lambda i, q, r: vistos.append(r))
     assert len(vistos) == 1
     assert vistos[0].total == 4
+
+
+def test_classico_preserva_estado_por_vaga_sem_contaminar_vizinha(quadro, monkeypatch):
+    from baliza.mapa import Mapa
+    from baliza.pdi import DetectorClassico
+    from baliza.tipos import Vaga
+
+    # Polígonos adjacentes inclinados têm envolventes que se sobrepõem.
+    mapa = Mapa("teste", [
+        Vaga("1", [(0, 0), (10, 0), (20, 20), (10, 20)]),
+        Vaga("2", [(10, 0), (20, 0), (30, 20), (20, 20)]),
+    ])
+    detector = DetectorClassico()
+    monkeypatch.setattr(detector, "estados", lambda quadro, vagas: ([True, False], [], 0.0))
+    resultado = Baliza(mapa, detector, janela_suavizacao=1).processar(quadro)
+    assert [leitura.estado for leitura in resultado.leituras] == [Estado.OCUPADA, Estado.LIVRE]

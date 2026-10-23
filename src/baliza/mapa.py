@@ -28,7 +28,7 @@ class Mapa:
             if len(vaga.contorno) < 3:
                 raise MapaInvalido(f"vaga {vaga.id} tem menos de tres pontos")
             vistos.add(vaga.id)
-        if detector not in (None, "veiculos", "vagas"):
+        if detector not in (None, "veiculos", "vagas", "classico"):
             raise MapaInvalido(f"detector recomendado desconhecido: {detector}")
         self.camera = camera
         self.vagas = vagas

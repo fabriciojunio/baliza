@@ -216,3 +216,11 @@ ALMEIDA, P. R. L.; OLIVEIRA, L. S.; BRITTO JR., A. S.; SILVA JR., E. J.;
 KOERICH, A. L. **PKLot: a robust dataset for parking lot classification**.
 Expert Systems with Applications, v. 42, n. 11, p. 4937-4949, 2015.
 Licença CC BY 4.0.
+
+##Integrantes
+
+Camila Pereira Raimundo
+Fabrício Júnio Almeida Dias
+Kauã Limão Nunes
+Luan Padilha Miranda
+Lucas Massamiti Tsuji

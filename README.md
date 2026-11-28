@@ -219,8 +219,8 @@ Licença CC BY 4.0.
 
 ##Integrantes
 
-Camila Pereira Raimundo
-Fabrício Júnio Almeida Dias
-Kauã Limão Nunes
-Luan Padilha Miranda
-Lucas Massamiti Tsuji
+Camila Pereira Raimundo /
+Fabrício Júnio Almeida Dias /
+Kauã Limão Nunes /
+Luan Padilha Miranda / 
+Lucas Massamiti Tsuji /

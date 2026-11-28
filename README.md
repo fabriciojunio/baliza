@@ -5,8 +5,8 @@ câmera fixa. Sem sensor no piso, sem cabo novo, sem obra: a câmera que já
 está lá por causa da segurança enquadra dezenas de vagas ao mesmo tempo.
 
 Trabalho da disciplina de Visão Computacional, feito por Fabrício Júnio
-Almeida Dias, Camila Pereira Raimundo, Luan Miranda Padilha e Kauã Limão
-Nunes.
+Almeida Dias, Camila Pereira Raimundo, Luan Miranda Padilha, Kauã Limão
+Nunes e Lucas Massamiti Tsuji
 
 ```
 baliza demonstracao                                   # roda o pacote que vem junto
